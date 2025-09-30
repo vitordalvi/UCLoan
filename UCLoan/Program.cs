@@ -25,28 +25,28 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 builder.Services.AddControllersWithViews();
 
-// Configurações de Identity
+// Configuracoes do Identity
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    // Configurações de senha
+    // Configuracoes de senha
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
     options.Password.RequiredLength = 6;
-    options.Password.RequiredUniqueChars = 0;
+    options.Password.RequiredUniqueChars = 1;
 
-    // Configurações de bloqueio
+    // Configuracoes de bloqueio
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 10;
-    options.Lockout.AllowedForNewUsers = true;
+    options.Lockout.AllowedForNewUsers = false;
 
-    // Configurações de usuário
+    // Configuracoes de usuario
     options.User.AllowedUserNameCharacters =
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.User.RequireUniqueEmail = true;
 
-    // Configurações de login
+    // Configuracoes de login
     options.SignIn.RequireConfirmedEmail = false;
     options.SignIn.RequireConfirmedPhoneNumber = false;
 });
@@ -54,22 +54,22 @@ builder.Services.Configure<IdentityOptions>(options =>
 var app = builder.Build();
 
 // Rodar migrations e seeding (roles + admin)
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.Migrate();
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+//    try
+//    {
+//        var context = services.GetRequiredService<ApplicationDbContext>();
+//        context.Database.Migrate();
 
-        await DbSeeder.SeedDatabaseAsync(services);
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
-    }
-}
+//        await DbSeeder.SeedDatabaseAsync(services);
+//    }
+//    catch (Exception ex)
+//    {
+//        var logger = services.GetRequiredService<ILogger<Program>>();
+//        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+//    }
+//}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

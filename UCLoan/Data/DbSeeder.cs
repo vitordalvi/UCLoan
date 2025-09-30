@@ -23,8 +23,8 @@ namespace UCLoan.Data
                 }
             }
 
-            var adminEmail = "admin@gmail.com";
-            var adminPassword = "Admin@123";
+            var adminEmail = "vitodalvi@gmail.com";
+            var adminPassword = "vitordalvi";
 
             var userExist = await userManager.FindByEmailAsync(adminEmail);
 
@@ -32,8 +32,8 @@ namespace UCLoan.Data
             {
                 var adminUser = new ApplicationUser
                 {
-                    UserName = "admin",
-                    FullName = "Admin",
+                    UserName = "vitodalvi",
+                    FullName = "Vitor Dalvi",
                     Email = adminEmail,
                     EmailConfirmed = true
                 };
@@ -49,8 +49,6 @@ namespace UCLoan.Data
                     throw new Exception("Failed to create the admin user: " + string.Join(", ", result.Errors));
                 }
             }
-
-
 
         }
     }
