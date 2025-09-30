@@ -6,20 +6,26 @@ using UCLoan.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+// Identity com ApplicationUser + Roles
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-    options.SignIn.RequireConfirmedAccount = true)
+{
+    options.SignIn.RequireConfirmedAccount = true;
+})
     .AddDefaultUI()
     .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddControllersWithViews();
 
+// Configurações de Identity
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Configurações de senha
@@ -29,14 +35,17 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequiredLength = 6;
     options.Password.RequiredUniqueChars = 0;
+
     // Configurações de bloqueio
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 10;
     options.Lockout.AllowedForNewUsers = true;
+
     // Configurações de usuário
     options.User.AllowedUserNameCharacters =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.User.RequireUniqueEmail = true;
+
     // Configurações de login
     options.SignIn.RequireConfirmedEmail = false;
     options.SignIn.RequireConfirmedPhoneNumber = false;
@@ -44,6 +53,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 var app = builder.Build();
 
+// Rodar migrations e seeding (roles + admin)
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -69,24 +79,21 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapStaticAssets();
-
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapRazorPages()
-   .WithStaticAssets();
+app.MapRazorPages();
 
 app.Run();
