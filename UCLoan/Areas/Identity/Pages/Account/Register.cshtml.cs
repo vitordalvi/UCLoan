@@ -124,6 +124,7 @@ namespace UCLoan.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 user.FullName = Input.FullName;
+                user.CPF = Input.CPF;
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
