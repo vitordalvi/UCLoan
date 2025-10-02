@@ -68,9 +68,9 @@ namespace UCLoan.Areas.Identity.Pages.Account.Manage
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessage = "O campo é obrigatório!")]
             [EmailAddress]
-            [Display(Name = "New email")]
+            [Display(Name = "Novo e-mail")]
             public string NewEmail { get; set; }
         }
 
@@ -92,7 +92,7 @@ namespace UCLoan.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Não foi possível localizar o usuário com o ID '{_userManager.GetUserId(User)}'.");
             }
 
             await LoadAsync(user);
@@ -104,7 +104,7 @@ namespace UCLoan.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Não foi possível localizar o usuário com o ID '{_userManager.GetUserId(User)}'.");
             }
 
             if (!ModelState.IsValid)
@@ -126,14 +126,14 @@ namespace UCLoan.Areas.Identity.Pages.Account.Manage
                     protocol: Request.Scheme);
                 await _emailSender.SendEmailAsync(
                     Input.NewEmail,
-                    "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    "Confirme seu e-mail",
+                    $"Por favor, confirme seu e-mail <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicando aqui</a>.");
 
-                StatusMessage = "Confirmation link to change email sent. Please check your email.";
+                StatusMessage = "O link para confirmação da troca do e-mail foi enviado. Por favor, cheque o seu e-mail.";
                 return RedirectToPage();
             }
 
-            StatusMessage = "Your email is unchanged.";
+            StatusMessage = "O seu e-mail não foi alterado.";
             return RedirectToPage();
         }
 
@@ -142,7 +142,7 @@ namespace UCLoan.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Não foi possível localizar o usuário com o ID '{_userManager.GetUserId(User)}'.");
             }
 
             if (!ModelState.IsValid)
@@ -162,10 +162,10 @@ namespace UCLoan.Areas.Identity.Pages.Account.Manage
                 protocol: Request.Scheme);
             await _emailSender.SendEmailAsync(
                 email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                "Confirme seu e-mail",
+                $"Por favor, confirme o seu e-mail <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicando aqui</a>.");
 
-            StatusMessage = "Verification email sent. Please check your email.";
+            StatusMessage = "O link para confirmação da troca do e-mail foi enviado. Por favor, cheque o seu e-mail.";
             return RedirectToPage();
         }
     }

@@ -55,7 +55,7 @@ namespace UCLoan.Areas.Identity.Pages.Account
             [BindProperty]
             [Required]
             [DataType(DataType.Text)]
-            [Display(Name = "Recovery Code")]
+            [Display(Name = "Código de Recuperação")]
             public string RecoveryCode { get; set; }
         }
 

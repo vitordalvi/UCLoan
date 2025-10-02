@@ -43,6 +43,7 @@ namespace UCLoan.Areas.Identity.Pages.Account
             /// </summary>
             [Required]
             [EmailAddress]
+            [Display(Name = "E-mail")]
             public string Email { get; set; }
 
             /// <summary>
@@ -52,6 +53,7 @@ namespace UCLoan.Areas.Identity.Pages.Account
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
+            [Display(Name = "Senha")]
             public string Password { get; set; }
 
             /// <summary>
@@ -59,7 +61,7 @@ namespace UCLoan.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
+            [Display(Name = "Confirmar Senha")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 

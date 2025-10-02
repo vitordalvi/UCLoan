@@ -81,7 +81,7 @@ namespace UCLoan.Areas.Identity.Pages.Account.Manage
             [Required]
             [StringLength(7, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Text)]
-            [Display(Name = "Verification Code")]
+            [Display(Name = "Código de Verificação")]
             public string Code { get; set; }
         }
 
@@ -90,7 +90,7 @@ namespace UCLoan.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Não foi possível localizar o usuário com o ID '{_userManager.GetUserId(User)}'.");
             }
 
             await LoadSharedKeyAndQrCodeUriAsync(user);
@@ -103,7 +103,7 @@ namespace UCLoan.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Não foi possível localizar o usuário com o ID '{_userManager.GetUserId(User)}'.");
             }
 
             if (!ModelState.IsValid)
@@ -120,16 +120,16 @@ namespace UCLoan.Areas.Identity.Pages.Account.Manage
 
             if (!is2faTokenValid)
             {
-                ModelState.AddModelError("Input.Code", "Verification code is invalid.");
+                ModelState.AddModelError("Input.Code", "O código de verificação é inválido.");
                 await LoadSharedKeyAndQrCodeUriAsync(user);
                 return Page();
             }
 
             await _userManager.SetTwoFactorEnabledAsync(user, true);
             var userId = await _userManager.GetUserIdAsync(user);
-            _logger.LogInformation("User with ID '{UserId}' has enabled 2FA with an authenticator app.", userId);
+            _logger.LogInformation("O usuário com o ID '{UserId}' habilitou a 2FA no aplicativo autenticador.", userId);
 
-            StatusMessage = "Your authenticator app has been verified.";
+            StatusMessage = "O seu aplicativo autenticador foi habilitado.";
 
             if (await _userManager.CountRecoveryCodesAsync(user) == 0)
             {
