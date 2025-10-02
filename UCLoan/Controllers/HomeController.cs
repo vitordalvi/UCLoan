@@ -1,7 +1,5 @@
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UCLoan.Models;
 
@@ -18,6 +16,11 @@ namespace UCLoan.Controllers
         }
 
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult Privacy()
         {
             return View();
         }

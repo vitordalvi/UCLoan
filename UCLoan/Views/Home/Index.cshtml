@@ -1,18 +1,10 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using UCLoan.Models
-@inject UserManager<ApplicationUser> UserManager
-@inject SignInManager<ApplicationUser> SignInManager
-
-@{
+﻿@{
     ViewData["Title"] = "Dashboard";
-    var user = await UserManager.GetUserAsync(User);
-    var userRoles = user != null ? await UserManager.GetRolesAsync(user) : new List<string>();
 }
 
 <div class="container mt-4">
     <h1 class="mb-4">@ViewData["Title"]</h1>
     <div class="row">
-        
         <!-- Card de Empréstimos -->
         <div class="col-md-4">
             <div class="card text-white bg-primary mb-3">
@@ -45,6 +37,16 @@
                     <a href="/Identity/Account/Manage" class="btn btn-light btn-sm">Editar perfil</a>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Seção de Atalhos -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h4>Atalhos rápidos</h4>
+            <a href="/Loan/Create" class="btn btn-primary me-2">Novo Empréstimo</a>
+            <a href="/Equipment/Index" class="btn btn-success me-2">Listar Equipamentos</a>
+            <a href="/Identity/Account/Manage" class="btn btn-info">Perfil</a>
         </div>
     </div>
 </div>
