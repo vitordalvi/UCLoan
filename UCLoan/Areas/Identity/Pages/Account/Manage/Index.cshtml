@@ -12,7 +12,13 @@
         <form id="profile-form" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
-                <input asp-for="Username" class="form-control" placeholder="Escolha o seu nome de usuário." disabled />
+                <div class="form-floating mb-3">
+                    <input asp-for="FullName" class="form-control" readonly onclick="this.removeAttribute('readonly')" />
+                    <label asp-for="FullName">Nome Completo</label>
+                </div>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Username" class="form-control" placeholder="Altere o seu e-mail." disabled />
                 <label asp-for="Username" class="form-label"></label>
             </div>
             <div class="form-floating mb-3">

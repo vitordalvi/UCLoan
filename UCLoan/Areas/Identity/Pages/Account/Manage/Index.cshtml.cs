@@ -26,37 +26,21 @@ namespace UCLoan.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        [Display(Name = "Usuário")]
+        [Display(Name = "E-mail")]
         public string Username { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        [Display(Name = "Nome completo")]
+        [RegularExpression(@"^[a-zA-Z\'\'-\'\s]{1,100}$", ErrorMessage = "Números e caracteres especiais não são permitidos no nome.")]
+        [StringLength(80, ErrorMessage = "O nome completo não pode exceder 80 caracteres.")]
+        [BindProperty]
+        public string FullName { get; set; }
+
         [TempData]
         public string StatusMessage { get; set; }
-
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
-
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Phone]
             [Display(Name = "Número de telefone")]
             public string PhoneNumber { get; set; }
@@ -80,9 +64,10 @@ namespace UCLoan.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Falha ao carregar o usuário com o ID '{_userManager.GetUserId(User)}'.");
             }
 
+            FullName = user.FullName;
             await LoadAsync(user);
             return Page();
         }
@@ -90,9 +75,10 @@ namespace UCLoan.Areas.Identity.Pages.Account.Manage
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Falha ao carregar o usuário com o ID '{_userManager.GetUserId(User)}'.");
             }
 
             if (!ModelState.IsValid)
@@ -100,6 +86,9 @@ namespace UCLoan.Areas.Identity.Pages.Account.Manage
                 await LoadAsync(user);
                 return Page();
             }
+
+            user.FullName = FullName;
+            await _userManager.UpdateAsync(user);
 
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             if (Input.PhoneNumber != phoneNumber)
@@ -113,7 +102,7 @@ namespace UCLoan.Areas.Identity.Pages.Account.Manage
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
+            StatusMessage = "O seu perfil foi atualizado.";
             return RedirectToPage();
         }
     }

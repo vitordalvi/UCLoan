@@ -80,10 +80,16 @@ namespace UCLoan.Areas.Identity.Pages.Account
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+            [Required (ErrorMessage = "O nome completo é um campo obrigatório.")]
+            [Display(Name = "Nome Completo")]
+            [RegularExpression(@"^[a-zA-Z\'\'-\'\s]{1,100}$", ErrorMessage = "Números e caracteres especiais não são permitidos no nome.")]
+            [StringLength(80, ErrorMessage = "O nome completo não pode exceder 80 caracteres.")]
+            public string FullName { get; set; }
+
+            [Required (ErrorMessage = "O CPF é um campo obrigatório.")]
+            [Display(Name = "CPF")]
+            public string CPF { get; set; }
+
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
@@ -96,7 +102,7 @@ namespace UCLoan.Areas.Identity.Pages.Account
             /// </summary>
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Compare("Password", ErrorMessage = "A senha e sua confirmação não são iguais.")]
             public string ConfirmPassword { get; set; }
         }
 
@@ -117,11 +123,13 @@ namespace UCLoan.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                user.FullName = Input.FullName;
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    _logger.LogInformation("Usuário criado com sua nova senha.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -132,8 +140,8 @@ namespace UCLoan.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    await _emailSender.SendEmailAsync(Input.Email, "Confirme seu e-mail",
+                        $"Por favor, confirme sua conta <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicando aqui</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -163,7 +171,7 @@ namespace UCLoan.Areas.Identity.Pages.Account
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
+                throw new InvalidOperationException($"Ñão foi possível criar '{nameof(ApplicationUser)}'. " +
                     $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
