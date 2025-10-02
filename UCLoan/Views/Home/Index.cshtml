@@ -1,8 +1,52 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
+    <div class="row">
+        <!-- Card de Empréstimos -->
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Empréstimos Ativos</div>
+                <div class="card-body">
+                    <h5 class="card-title">5</h5>
+                    <p class="card-text">Você possui 5 empréstimos ativos.</p>
+                    <a href="/Loan/Index" class="btn btn-light btn-sm">Ver detalhes</a>
+                </div>
+            </div>
+        </div>
+        <!-- Card de Equipamentos -->
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Equipamentos Disponíveis</div>
+                <div class="card-body">
+                    <h5 class="card-title">12</h5>
+                    <p class="card-text">Há 12 equipamentos disponíveis para empréstimo.</p>
+                    <a href="/Equipment/Index" class="btn btn-light btn-sm">Ver equipamentos</a>
+                </div>
+            </div>
+        </div>
+        <!-- Card de Perfil -->
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">Seu Perfil</div>
+                <div class="card-body">
+                    <h5 class="card-title">E-mail: @User.Identity.Name</h5>
+                    <p class="card-text">Gerencie suas informações de perfil.</p>
+                    <a href="/Identity/Account/Manage" class="btn btn-light btn-sm">Editar perfil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção de Atalhos -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h4>Atalhos rápidos</h4>
+            <a href="/Loan/Create" class="btn btn-primary me-2">Novo Empréstimo</a>
+            <a href="/Equipment/Index" class="btn btn-success me-2">Listar Equipamentos</a>
+            <a href="/Identity/Account/Manage" class="btn btn-info">Perfil</a>
+        </div>
+    </div>
 </div>
