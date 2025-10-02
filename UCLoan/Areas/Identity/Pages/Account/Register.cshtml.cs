@@ -129,6 +129,10 @@ namespace UCLoan.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+
+                    // Adiciona novo usuário para o cargo User
+                    await _userManager.AddToRoleAsync(user, "User");
+
                     _logger.LogInformation("Usuário criado com sua nova senha.");
 
                     var userId = await _userManager.GetUserIdAsync(user);

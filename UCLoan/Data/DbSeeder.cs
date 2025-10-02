@@ -1,55 +1,45 @@
 ﻿using Microsoft.AspNetCore.Identity;
-
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Threading.Tasks;
 using UCLoan.Models;
 
-namespace UCLoan.Data
+public static class DbSeeder
 {
-    public static class DbSeeder
+    public static async Task SeedDatabaseAsync(IServiceProvider serviceProvider)
     {
-        public static async Task SeedDatabaseAsync(IServiceProvider serviceProvider)
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+        // Cria roles se não existirem
+        string[] roles = { "Admin", "User" };
+        foreach (var roleName in roles)
         {
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-
-            // Criando cargos
-            var roles = new[] { "Admin", "User" };
-
-            foreach (var role in roles)
+            if (!await roleManager.RoleExistsAsync(roleName))
             {
-                if (!await roleManager.RoleExistsAsync(role))
-                {
-                    await roleManager.CreateAsync(new IdentityRole(role));
-                }
+                await roleManager.CreateAsync(new IdentityRole(roleName));
             }
+        }
 
-            var adminEmail = "vitodalvi@gmail.com";
-            var adminPassword = "vitordalvi";
-
-            var userExist = await userManager.FindByEmailAsync(adminEmail);
-
-            if (userExist == null)
+        // Cria usuário admin se não existir
+        string adminEmail = "admin@ucloan.com";
+        string adminPassword = "vitordalvi";
+        if (await userManager.FindByEmailAsync(adminEmail) == null)
+        {
+            var adminUser = new ApplicationUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
+            var result = await userManager.CreateAsync(adminUser, adminPassword);
+            if (result.Succeeded)
             {
-                var adminUser = new ApplicationUser
-                {
-                    UserName = "vitodalvi",
-                    FullName = "Vitor Dalvi",
-                    Email = adminEmail,
-                    EmailConfirmed = true
-                };
-
-                var result = await userManager.CreateAsync(adminUser, adminPassword);
-
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(adminUser, "Admin");
-                }
-                else
-                {
-                    throw new Exception("Failed to create the admin user: " + string.Join(", ", result.Errors));
-                }
+                await userManager.AddToRoleAsync(adminUser, "Admin");
             }
+        }
+    }
 
+    public static async Task EnsureUserRoleAsync(UserManager<ApplicationUser> userManager, ApplicationUser user)
+    {
+        if (!await userManager.IsInRoleAsync(user, "User"))
+        {
+            await userManager.AddToRoleAsync(user, "User");
         }
     }
 }

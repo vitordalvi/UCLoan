@@ -17,7 +17,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 // Identity com ApplicationUser + Roles
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = true;
+    options.SignIn.RequireConfirmedAccount = false;
 })
     .AddDefaultUI()
     .AddDefaultTokenProviders()
@@ -54,6 +54,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 var app = builder.Build();
 
 //Rodar migrations e seeding (roles + admin)
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -70,6 +71,7 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "An error occurred while migrating or seeding the database.");
     }
 }
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
