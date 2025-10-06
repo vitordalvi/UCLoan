@@ -4,6 +4,7 @@
     var allRoles = (IEnumerable<string>)ViewBag.AllRoles;
     var userRoles = (IEnumerable<string>)ViewBag.UserRoles;
 
+    // Seleciona somente um cargo
     var selectedRole = userRoles?.FirstOrDefault();
 }
 
@@ -52,9 +53,12 @@
                             <select id="roleSelect" name="role" class="form-select">
                                 @foreach (var role in allRoles)
                                 {
-                                    // Compara o cargo atual no loop com o cargo pré-selecionado (se houver)
-                                    var isSelected = role.Equals(selectedRole, StringComparison.OrdinalIgnoreCase);
-                                    <option value="@role" (isSelected ? "selected" : "")>@role</option>
+                                    // Placeholder das opcoes
+                                    <option value="" selected disabled hidden>Selecione uma opção</option>
+                                    // Verifica se o cargo é o selecionado
+                                    var isSelected = string.Equals(role, selectedRole);
+                                    // Renderiza a opcao escolhida
+                                    <option value="@role" selected="@(isSelected ? "selected" : null)">@role</option>
                                 }
                             </select>
                         </div>
