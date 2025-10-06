@@ -23,6 +23,8 @@ namespace UCLoan.Repositories
 
         public Task<IdentityResult> UpdateAsync(ApplicationUser user) =>
             _userManager.UpdateAsync(user);
+        public Task<IdentityResult> DeleteAsync(ApplicationUser user) =>
+            _userManager.DeleteAsync(user);
 
         public async Task<IList<string>> GetAllRolesAsync() =>
             await _roleManager.Roles.Select(r => r.Name!).ToListAsync();
@@ -35,5 +37,8 @@ namespace UCLoan.Repositories
 
         public Task<IdentityResult> RemoveFromRolesAsync(ApplicationUser user, IEnumerable<string> roles) =>
             _userManager.RemoveFromRolesAsync(user, roles);
+
+        public Task<bool> RoleExistsAsync(string roleName) =>
+            _roleManager.RoleExistsAsync(roleName);
     }
 }

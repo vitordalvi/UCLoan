@@ -8,10 +8,11 @@ namespace UCLoan.Repositories
         Task<List<ApplicationUser>> GetUsersAsync();
         Task<ApplicationUser?> GetByIdAsync(string id);
         Task<IdentityResult> UpdateAsync(ApplicationUser user);
-
+        Task<IdentityResult> DeleteAsync(ApplicationUser user);
         Task<IList<string>> GetAllRolesAsync();
         Task<IList<string>> GetUserRolesAsync(ApplicationUser user);
         Task<IdentityResult> AddToRolesAsync(ApplicationUser user, IEnumerable<string> roles);
         Task<IdentityResult> RemoveFromRolesAsync(ApplicationUser user, IEnumerable<string> roles);
+        Task<bool> RoleExistsAsync(string roleName);
     }
 }
