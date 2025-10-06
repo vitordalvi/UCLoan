@@ -1,22 +1,43 @@
-﻿namespace UCLoan.Constants
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace UCLoan.Constants
 {
     public class EquipmentConstants
     {
         public enum EquipmentLoanStatus
         {
+            [Display(Name = "Indisponível")]
+            Unavailable,
+
+            [Display(Name = "Disponível")]
             Available,
-            Loaned,
-            Reserved,
-            Maintenance
+
+            [Display(Name = "Emprestado")]
+            Borrowed,
+
+            [Display(Name = "Em atraso")]
+            Overdue,
+
+            [Display(Name = "Devolvido")]
+            Returned,
         }
 
         public enum EquipmentPhysicalStatus
         {
-            New,
+            [Display(Name = "Excelente")]
+            Excellent,
+
+            [Display(Name = "Bom")]
             Good,
+
+            [Display(Name = "Regular")]
             Fair,
+
+            [Display(Name = "Ruim")]
             Poor,
-            Broken
+
+            [Display(Name = "Quebrado")]
+            Broken,
         }
     }
 }
