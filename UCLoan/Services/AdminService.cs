@@ -8,31 +8,30 @@ namespace UCLoan.Services
     public class AdminService
     {
         private readonly IAdminRepository _adminRepository;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AdminService(IAdminRepository adminRepository, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AdminService(IAdminRepository adminRepository)
         {
             _adminRepository = adminRepository;
-            _userManager = userManager;
-            _roleManager = roleManager;
         }
 
-        public async Task<ApplicationUser?> GetByIdAsync(string id)
+        public Task<List<ApplicationUser>> GetUsersAsync() =>
+            _adminRepository.GetUsersAsync();
+
+        public Task<ApplicationUser?> GetByIdAsync(string id)
         {
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrWhiteSpace(id))
             {
-                return null;
+                return Task.FromResult<ApplicationUser?>(null);
             }
-
-            return await _userManager.FindByIdAsync(id);
+            return _adminRepository.GetByIdAsync(id);
         }
+            
 
         public async Task<(bool Success, IEnumerable<string> Erros)> UpdateDataAsync(ApplicationUser postedUser, IEnumerable<string?> selectedRoles)
         {
             var errors = new List<string>();
 
-            var user = await _userManager.FindByIdAsync(postedUser.Id);
+            var user = await _adminRepository.GetByIdAsync(postedUser.Id);
             if (user == null)
             {
                 return (false, new[] { "Usuário não encontrado" });
@@ -48,7 +47,7 @@ namespace UCLoan.Services
                 user.UserName = postedUser.Email;
             }
 
-            var updateResult = await _userManager.UpdateAsync(user);
+            var updateResult = await _adminRepository.UpdateAsync(user);
             if (!updateResult.Succeeded)
             {
                 errors.AddRange(updateResult.Errors.Select(e => e.Description));
@@ -62,7 +61,7 @@ namespace UCLoan.Services
 
             foreach (var role in distinctSelected.ToList())
             {
-                if (!await _roleManager.RoleExistsAsync(role))
+                if (!await _adminRepository.RoleExistsAsync(role))
                 {
                     errors.Add($"O seguinte cargo é inexistente: {role}");
                     distinctSelected.Remove(role);
@@ -71,21 +70,21 @@ namespace UCLoan.Services
 
             if (!errors.Any())
             {
-                var currentRoles = await _userManager.GetRolesAsync(user);
+                var currentRoles = await _adminRepository.GetUserRolesAsync(user);
 
                 var addRole = distinctSelected.Except(currentRoles, StringComparer.OrdinalIgnoreCase).ToList();
                 var removeRole = currentRoles.Except(distinctSelected, StringComparer.OrdinalIgnoreCase).ToList();
 
                 if (addRole.Any())
                 {
-                    var addResult = await _userManager.AddToRolesAsync(user, addRole);
+                    var addResult = await _adminRepository.AddToRolesAsync(user, addRole);
                     if (!addResult.Succeeded)
                         errors.AddRange(addResult.Errors.Select(e => e.Description));
                 }
 
                 if (removeRole.Any())
                 {
-                    var removeResult = await _userManager.RemoveFromRolesAsync(user, removeRole);
+                    var removeResult = await _adminRepository.RemoveFromRolesAsync(user, removeRole);
                     if (!removeResult.Succeeded)
                         errors.AddRange(removeResult.Errors.Select(e => e.Description));
                 }
@@ -94,14 +93,30 @@ namespace UCLoan.Services
             return (!errors.Any(), errors);
         }
 
-        public async Task<IList<string>> GetAllRolesAsync()
-        {
-            return await _roleManager.Roles.Select(r => r.Name!).ToListAsync();
-        }
+        public Task<IList<string>> GetAllRolesAsync() =>
+            _adminRepository.GetAllRolesAsync();
 
-        public async Task<IList<string>> GetUserRolesAsync(ApplicationUser user)
+        public Task<IList<string>> GetUserRolesAsync(ApplicationUser user) =>
+            _adminRepository.GetUserRolesAsync(user);
+
+        public async Task<(bool Success, string? Error)> DeleteUserAsync(string id)
         {
-            return await _userManager.GetRolesAsync(user);
+            var user = await _adminRepository.GetByIdAsync(id);
+
+            if (user == null)
+            {
+                return (false, "Usuário não encontrado");
+            }
+
+            var result = await _adminRepository.DeleteAsync(user);
+
+            if (!result.Succeeded)
+            {
+                return (false, string.Join("; ", result.Errors.Select(e => e.Description)));
+            }
+
+            // Se chegar aqui, a exclusão deu certo e não teve erros
+            return (true, null);
         }
     }
 }
