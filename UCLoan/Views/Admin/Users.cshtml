@@ -1,4 +1,5 @@
-﻿@model IEnumerable<UCLoan.Models.ApplicationUser>
+﻿@using UCLoan.Repositories
+@model IEnumerable<UCLoan.Models.ApplicationUser>
 
 @{
     ViewData["Title"] = "Gerenciar Usuários";
@@ -25,7 +26,6 @@
                 <th>CPF</th>
                 <th>Email</th>
                 <th>Telefone</th>
-                <th>Cargo</th>
                 <th class="text-center" style="width:180px;">Ações</th>
             </tr>
         </thead>
@@ -39,7 +39,6 @@
                         <td>@user.CPF</td>
                         <td>@user.Email</td>
                         <td>@user.PhoneNumber</td>
-                        <td>@user.</td>
                         <td class="text-center">
                             <a class="btn btn-sm btn-primary"
                                asp-controller="Admin"
