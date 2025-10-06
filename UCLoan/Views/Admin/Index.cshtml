@@ -1,5 +1,61 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using Microsoft.AspNetCore.Identity
+@using UCLoan.Models
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
 @{
+    ViewData["Title"] = "Dashboard Admin";
+
+    string userRoles = "";
+    var user = await UserManager.GetUserAsync(User);
+
+    if (user != null)
+    {
+        var roles = await UserManager.GetRolesAsync(user);
+        if (roles != null && roles.Any())
+        {
+            userRoles = string.Join(", ", roles);
+        }
+        else
+        {
+            userRoles = "Sem cargo"; // Caso o usuário não tenha nenhum cargo (só os antigos podem cair aqui)
+        }
+    }
 }
+
+<div class="container mt-4">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Empréstimos Ativos</div>
+                <div class="card-body">
+                    <h5 class="card-title">5</h5>
+                    <p class="card-text">Você possui 5 empréstimos ativos.</p>
+                    <a href="/Loan/Index" class="btn btn-light btn-sm">Ver detalhes</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Equipamentos Disponíveis</div>
+                <div class="card-body">
+                    <h5 class="card-title">12</h5>
+                    <p class="card-text">Há 12 equipamentos disponíveis para empréstimo.</p>
+                    <a href="/Equipment/Index" class="btn btn-light btn-sm">Ver equipamentos</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">Seu Perfil</div>
+                <div class="card-body">
+                    <h5 class="card-title">E-mail: @User.Identity.Name</h5>
+                    <h5 class="card-title">Cargo: @userRoles</h5>
+                    <p class="card-text">Gerencie suas informações de perfil.</p>
+                    <a href="/Identity/Account/Manage" class="btn btn-light btn-sm">Editar perfil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
