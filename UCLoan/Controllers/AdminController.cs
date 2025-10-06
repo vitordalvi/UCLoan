@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UCLoan.Models;
+using UCLoan.Repositories;
 using UCLoan.Services;
 
 namespace UCLoan.Controllers
@@ -10,19 +11,17 @@ namespace UCLoan.Controllers
     public class AdminController : Controller
     {
         private readonly AdminService _adminService;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IAdminRepository _adminRepository;
 
-        public AdminController(AdminService adminService, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AdminController(AdminService adminService, IAdminRepository adminRepository)
         {
             _adminService = adminService;
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _adminRepository = adminRepository;
         }
 
-        public IActionResult Users()
+        public async Task<IActionResult> Users()
         {
-            var users = _userManager.Users.ToList();
+            var users = await _adminService.GetUsersAsync();
             return View(users);
         }
 
@@ -47,16 +46,17 @@ namespace UCLoan.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditUser([Bind("Id,FullName,CPF,Email,PhoneNumber")] ApplicationUser model, string[]? roles)
+        public async Task<IActionResult> EditUser([Bind("Id,FullName,CPF,Email,PhoneNumber")] ApplicationUser model, string? role)
         {
             if (!ModelState.IsValid)
             {
                 ViewBag.AllRoles = await _adminService.GetAllRolesAsync();
-                ViewBag.UserRoles = roles ?? Array.Empty<string>();
+                ViewBag.UserRoles = string.IsNullOrWhiteSpace(role) ? Array.Empty<string>() : new[] { role };
                 return View(model);
             }
 
-            var (success, errors) = await _adminService.UpdateDataAsync(model, roles ?? Array.Empty<string>());
+            var rolesArray = string.IsNullOrWhiteSpace(role) ? Array.Empty<string>() : new[] { role };
+            var (success, errors) = await _adminService.UpdateDataAsync(model, rolesArray);
 
             if (!success)
             {
@@ -66,7 +66,7 @@ namespace UCLoan.Controllers
                 }
 
                 ViewBag.AllRoles = await _adminService.GetAllRolesAsync();
-                ViewBag.UserRoles = roles ?? Array.Empty<string>();
+                ViewBag.UserRoles = rolesArray;
                 return View(model);
             }
 
@@ -78,28 +78,17 @@ namespace UCLoan.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrWhiteSpace(id))
             {
                 TempData["Error"] = "Id inválido.";
                 return RedirectToAction(nameof(Users));
             }
 
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                TempData["Error"] = "Usuário não encontrado.";
-                return RedirectToAction(nameof(Users));
-            }
-
-            var result = await _userManager.DeleteAsync(user);
-            if (!result.Succeeded)
-            {
-                TempData["Error"] = string.Join(" | ", result.Errors.Select(e => e.Description));
-            }
+            var (success, error) = await _adminService.DeleteUserAsync(id);
+            if (!success)
+                TempData["Error"] = error;
             else
-            {
-                TempData["Success"] = "Usuário excluído com sucesso.";
-            }
+                TempData["Success"] = "Usuário removido com sucesso.";
 
             return RedirectToAction(nameof(Users));
         }
