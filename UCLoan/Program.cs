@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using UCLoan.Data;
 using UCLoan.Models;
+using UCLoan.Repositories;
+using UCLoan.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +52,17 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.SignIn.RequireConfirmedEmail = false;
     options.SignIn.RequireConfirmedPhoneNumber = false;
 });
+
+// Injecao de dependência dos serviços
+builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<EquipmentService>();
+builder.Services.AddScoped<LoanService>();
+
+// Injecao de dependência dos repositórios
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
+builder.Services.AddScoped<ILoanRepository, LoanRepository>();
+
 
 var app = builder.Build();
 
