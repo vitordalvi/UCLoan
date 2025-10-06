@@ -2,6 +2,7 @@
 @using UCLoan.Models
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
+@inject RoleManager<IdentityRole> RoleManager
 
 @{
     ViewData["Title"] = "Dashboard";
@@ -26,6 +27,8 @@
 <div class="container mt-4">
     <h1 class="mb-4">@ViewData["Title"]</h1>
     <div class="row">
+        
+        <!-- Card de Empréstimos -->
         <div class="col-md-4">
             <div class="card text-white bg-primary mb-3">
                 <div class="card-header">Empréstimos Ativos</div>
@@ -36,6 +39,7 @@
                 </div>
             </div>
         </div>
+        <!-- Card de Equipamentos -->
         <div class="col-md-4">
             <div class="card text-white bg-success mb-3">
                 <div class="card-header">Equipamentos Disponíveis</div>
@@ -46,6 +50,7 @@
                 </div>
             </div>
         </div>
+        <!-- Card de Perfil -->
         <div class="col-md-4">
             <div class="card text-white bg-info mb-3">
                 <div class="card-header">Seu Perfil</div>
