@@ -99,13 +99,28 @@ namespace UCLoan.Services
         public Task<IList<string>> GetUserRolesAsync(ApplicationUser user) =>
             _adminRepository.GetUserRolesAsync(user);
 
-        public async Task<(bool Success, string? Error)> DeleteUserAsync(string id)
+        public async Task<(bool Success, string? Error)> DeleteUserAsync(string id, string currentUserId)
         {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return (false, "Usuário não encontrado");
+            }
+
+            if (string.IsNullOrWhiteSpace(currentUserId))
+            {
+                return (false, "O Id do usuário autenticado é inválido.");
+            }
+
+            if (string.Equals(id, currentUserId, StringComparison.OrdinalIgnoreCase))
+            {
+                return (false, "Você não pode excluir o seu próprio usuário.");
+            }
+            
             var user = await _adminRepository.GetByIdAsync(id);
 
             if (user == null)
             {
-                return (false, "Usuário não encontrado");
+                return (false, "O usuário não foi encontrado");
             }
 
             var result = await _adminRepository.DeleteAsync(user);

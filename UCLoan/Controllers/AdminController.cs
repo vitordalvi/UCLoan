@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using UCLoan.Models;
 using UCLoan.Repositories;
 using UCLoan.Services;
@@ -78,13 +79,16 @@ namespace UCLoan.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser(string id)
         {
+            // Claim para identificar o ID do usuário autenticado
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             if (string.IsNullOrWhiteSpace(id))
             {
                 TempData["Error"] = "Id inválido.";
                 return RedirectToAction(nameof(Users));
             }
 
-            var (success, error) = await _adminService.DeleteUserAsync(id);
+            var (success, error) = await _adminService.DeleteUserAsync(id, currentUserId);
             if (!success)
                 TempData["Error"] = error;
             else
