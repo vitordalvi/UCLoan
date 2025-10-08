@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using UCLoan.Models;
+﻿using UCLoan.Models;
 using UCLoan.Repositories;
 
 namespace UCLoan.Services
