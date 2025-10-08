@@ -238,7 +238,8 @@ namespace UCLoan.Data.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("EquipmentId")
                         .HasColumnType("int");
@@ -253,6 +254,9 @@ namespace UCLoan.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EquipmentId")
+                        .IsUnique();
 
                     b.HasIndex("EquipmentModelId");
 
