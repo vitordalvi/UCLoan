@@ -1,0 +1,108 @@
+﻿@using UCLoan.Repositories
+@model IEnumerable<UCLoan.Models.Equipment>
+
+@{
+    ViewData["Title"] = "Gerenciar Equipamentos";
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.css" />
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="container">
+    <div class="page-top">
+        <h1 class="m-3">Lista de Equipamentos</h1>
+        <a class="btn btn-primary"
+           asp-controller="Equipment"
+           asp-action="AddEquipment">
+            Adicionar Equipamento
+        </a>
+        <a class="btn btn-primary"
+           asp-controller="Equipment"
+           asp-action="ManageEquipmentModels">
+            Gerenciar Modelos
+        </a>
+    </div>
+    <table id="equipmentsTable" class="table table-striped table-bordered align-middle text-lg-center">
+        <thead class="table-dark">
+            <tr>
+                <th>ID do Equipamento</th>
+                <th>Modelo</th>
+                <th>Situação</th>
+                <th>Estado físico</th>
+                <th class="text-center" style="width:180px;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var eq in Model)
+                {
+                    <tr>
+                        <td>@eq.EquipmentId</td>
+                        <td>@eq.EquipmentModel?.Name</td>
+                        <td>@eq.LoanStatus</td>
+                        <td>@eq.PhysicalStatus</td>
+                        <td class="text-center">
+                            <a class="btn btn-sm btn-primary"
+                               asp-controller="Equipment"
+                               asp-action="EditEquipment"
+                               asp-route-id="@eq.Id">
+                                Editar
+                            </a>
+                            <a class="btn btn-sm btn-warning"
+                               asp-controller="Equipment"
+                               asp-action="TransferEquipment"
+                               asp-route-id="@eq.Id">
+                                Transferir
+                            </a>
+                            <form asp-action="DeleteEquipment"
+                                  method="post"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Confirmar exclusão do equipamento @eq.EquipmentId?');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@eq.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center text-danger">Nenhum equipamento foi encontrado!</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+    
+
+@section Scripts {
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.bootstrap5.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#equipmentsTable').DataTable({
+                paging: true,
+                searching: true,
+                ordering: true,
+                info: false,
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.13.5/i18n/pt-BR.json"
+                }
+            });
+        });
+    </script>
+}
