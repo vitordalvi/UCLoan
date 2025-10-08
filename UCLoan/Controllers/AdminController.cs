@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using UCLoan.Models;
@@ -26,8 +25,10 @@ namespace UCLoan.Controllers
             return View(users);
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var user = await _adminService.GetUsersAsync();
+
             return View();
         }
 
