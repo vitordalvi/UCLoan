@@ -1,0 +1,72 @@
+﻿@model UCLoan.Models.Equipment
+
+@{
+    ViewData["Title"] = "Criar novo Equipamento";
+
+    var allEquipmentModels = (IEnumerable<SelectListItem>)ViewBag.AllEquipmentModels;
+    var allLoanStatus = (IEnumerable<SelectListItem>)ViewBag.AllLoanStatus;
+    var allPhysicalStatus = (IEnumerable<SelectListItem>)ViewBag.AllPhysicalStatus;
+
+    if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    
+    if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">@ViewData["Title"]</h3>
+
+                    <form asp-controller="Equipment"
+                          asp-action="AddEquipment"
+                          method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="EquipmentId" class="form-control" placeholder="Patrimônio" />
+                            <label asp-for="EquipmentId">ID do Equipamento</label>
+                            <span asp-validation-for="EquipmentId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Modelo do Equipamento</label>
+                            <select asp-for="EquipmentModelId"
+                                    asp-items="allEquipmentModels"
+                                    class="form-select">
+                                <option value="">Selecione um modelo</option>
+                            </select>
+                            <span asp-validation-for="EquipmentModelId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Estado físico</label>
+                            <select asp-for="PhysicalStatus"
+                                    asp-items="allPhysicalStatus"
+                                    class="form-select">
+                                <option value="">Selecione o estado físico</option>
+                            </select>
+                            <span asp-validation-for="PhysicalStatus" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Description" class="form-control" placeholder="Descrição" />
+                            <label asp-for="Description">Descrição</label>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="w-100 btn btn-lg btn-primary">Salvar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
