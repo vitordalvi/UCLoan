@@ -1,4 +1,5 @@
-﻿@model UCLoan.Models.Equipment
+﻿@using UCLoan.ViewModels.Equipment
+@model AddEquipmentViewModel
 
 @{
     ViewData["Title"] = "Criar novo Equipamento";
@@ -42,7 +43,7 @@
                             <select asp-for="EquipmentModelId"
                                     asp-items="allEquipmentModels"
                                     class="form-select">
-                                <option value="0">Selecione um modelo</option>
+                                <option value="">Selecione um modelo</option>
                             </select>
                             <span asp-validation-for="EquipmentModelId" class="text-danger"></span>
                         </div>
