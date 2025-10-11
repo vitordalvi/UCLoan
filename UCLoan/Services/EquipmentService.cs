@@ -70,18 +70,15 @@ namespace UCLoan.Services
             _equipmentRepository.GetByIdAsync(id, ct);
 
         public async Task<(bool Success, string? Error)> CreateAsync(
-            int equipmentModelId,
+            EquipmentModel equipmentModel,
             int equipmentId,
             string description,
             EquipmentConstants.EquipmentPhysicalStatus physicalStatus,
             CancellationToken ct = default)
         {
-
-            var model = await _equipmentRepository.GetModelByIdAsync(equipmentModelId, ct);
-
-            if (model == null)
+            if (equipmentModel == null)
             {
-                return (false, "O modelo não existe.");
+                return (false, "O modelo escolhido não existe.");
             }
 
             var equipment = new Equipment
@@ -90,7 +87,8 @@ namespace UCLoan.Services
                 Description = description.Trim(),
                 PhysicalStatus = physicalStatus,
                 LoanStatus = EquipmentConstants.EquipmentLoanStatus.Available,
-                EquipmentModel = model
+                EquipmentModelId = equipmentModel.Id,
+                EquipmentModel = equipmentModel,
             };
 
             await _equipmentRepository.AddAsync(equipment, ct);
@@ -151,7 +149,7 @@ namespace UCLoan.Services
             if (entity == null)
                 return (false, "Equipamento não encontrado.");
 
-            // Não voltar de Returned para Borrowed direto
+            // Não voltar de Returned para emprestado direto
             if (entity.LoanStatus == EquipmentConstants.EquipmentLoanStatus.Returned &&
                 newStatus == EquipmentConstants.EquipmentLoanStatus.Borrowed)
             {

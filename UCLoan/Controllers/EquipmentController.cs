@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UCLoan.Constants;
+using UCLoan.Models;
 using UCLoan.Services;
 
 namespace UCLoan.Controllers
@@ -64,19 +65,19 @@ namespace UCLoan.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddEquipment([Bind("EquipmentId,EquipmentModelId,PhysicalStatus,Description")] Models.Equipment equipment)
+        public async Task<IActionResult> AddEquipment([Bind("EquipmentModelId,EquipmentId,Description,PhysicalStatus")] Models.Equipment equipment)
         {
-            if (!ModelState.IsValid)
-            {
-                await LoadDropdownsAsync();
-                return View(equipment);
-            }
+            var model = await _equipmentService.GetModel(equipment.EquipmentModel);
 
-            // Verifica se modelo existe
-            var model = await _equipmentService.GetModelByIdAsync(equipment.EquipmentModelId);
-            if (model == null)
+            if (equipment.EquipmentModelId <= 0)
             {
                 ModelState.AddModelError(nameof(equipment.EquipmentModelId), "Modelo de equipamento inválido.");
+                TempData["Error"] = "Modelo inválido.";
+            }
+
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "Modelo de equipamento inválido.";
                 await LoadDropdownsAsync();
                 return View(equipment);
             }
@@ -84,9 +85,9 @@ namespace UCLoan.Controllers
             try
             {
                 var (success, error) = await _equipmentService.CreateAsync(
-                    equipment.EquipmentModelId,
+                    equipment.EquipmentModel,
                     equipment.EquipmentId,
-                    equipment.Description,
+                    equipment.Description ?? string.Empty,
                     equipment.PhysicalStatus);
 
                 if (!success)

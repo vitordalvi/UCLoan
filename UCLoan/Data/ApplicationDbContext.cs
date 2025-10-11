@@ -15,7 +15,7 @@ namespace UCLoan.Data
 
         public DbSet<Loan> Loans { get; set; }
         public DbSet<LoanHistory> LoanHistories { get; set; }
-        public DbSet<Equipment> Equipments { get; set; }
+        public DbSet<Equipment> Equipment { get; set; }
         public DbSet<EquipmentModel> EquipmentModels { get; set; }
         public DbSet<EquipmentHistory> EquipmentHistories { get; set; }
 

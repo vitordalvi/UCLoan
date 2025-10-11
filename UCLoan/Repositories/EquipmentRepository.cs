@@ -76,6 +76,8 @@ namespace UCLoan.Repositories
             _context.Set<EquipmentModel>()
                     .Include(m => m.Equipments)
                     .FirstOrDefaultAsync(m => m.Id == id, ct);
+        public Task<Equipment> GetEquipmentModel(Equipment equipment, Cancel)
+
         public async Task AddModelAsync(EquipmentModel model, CancellationToken ct = default)
         {
             await _context.Set<EquipmentModel>().AddAsync(model, ct);
