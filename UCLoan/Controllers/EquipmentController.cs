@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UCLoan.Constants;
+using UCLoan.Extensions;
 using UCLoan.Models;
 using UCLoan.Services;
+using UCLoan.ViewModels.Equipment;
 
 namespace UCLoan.Controllers
 {
@@ -20,6 +22,11 @@ namespace UCLoan.Controllers
         public async Task<IActionResult> ManageEquipment(CancellationToken ct)
         {
             var equipments = await _equipmentService.GetAllEquipmentAsync(ct);
+
+            // Gera dicionários de display names para os enums
+            ViewBag.LoanStatusDisplay = EnumExtensions.GetDisplayNames<EquipmentConstants.EquipmentLoanStatus>();
+            ViewBag.PhysicalStatusDisplay = EnumExtensions.GetDisplayNames<EquipmentConstants.EquipmentPhysicalStatus>();
+
             return View(equipments);
         }
 
@@ -28,6 +35,30 @@ namespace UCLoan.Controllers
         {
             var models = await _equipmentService.GetAllEquipmentModelsAsync();
             return View(models);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteEquipment(int id, CancellationToken ct)
+        {
+            if (id <= 0)
+            {
+                TempData["Error"] = "Id inválido.";
+                return RedirectToAction(nameof(ManageEquipmentModels));
+            }
+
+            var (success, error) = await _equipmentService.DeleteAsync(id);
+
+            if (!success)
+            {
+                TempData["Error"] = error;
+            }
+            else
+            {
+                TempData["Success"] = "Equipamento deletado com sucesso.";
+            }
+
+            return RedirectToAction(nameof(ManageEquipmentModels));
         }
 
         [HttpPost]
@@ -56,45 +87,33 @@ namespace UCLoan.Controllers
         [HttpGet]
         public async Task<IActionResult> AddEquipment()
         {
-            ViewBag.AllEquipmentModels = await _equipmentService.GetAllEquipmentModelsSelectListAsync();
-            ViewBag.AllLoanStatus = await _equipmentService.GetAllLoanStatusSelectListAsync();
-            ViewBag.AllPhysicalStatus = await _equipmentService.GetAllPhysicalStatusSelectListAsync();
-
+            await LoadDropdownsAsync();
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddEquipment([Bind("EquipmentModelId,EquipmentId,Description,PhysicalStatus")] Models.Equipment equipment)
+        public async Task<IActionResult> AddEquipment(AddEquipmentViewModel viewModel)
         {
-            var model = await _equipmentService.GetEquipmentModel(equipment);
-
-            if (equipment.EquipmentModelId <= 0)
-            {
-                ModelState.AddModelError(nameof(equipment.EquipmentModelId), "Modelo de equipamento inválido.");
-                TempData["Error"] = "Modelo inválido.";
-            }
-
             if (!ModelState.IsValid)
             {
-                TempData["Error"] = "Modelo de equipamento inválido.";
                 await LoadDropdownsAsync();
-                return View(equipment);
+                return View(viewModel);
             }
 
             try
             {
                 var (success, error) = await _equipmentService.CreateAsync(
-                    equipment.EquipmentModel,
-                    equipment.EquipmentId,
-                    equipment.Description ?? string.Empty,
-                    equipment.PhysicalStatus);
+                    viewModel.EquipmentModelId,
+                    viewModel.EquipmentId,
+                    viewModel.Description ?? string.Empty,
+                    viewModel.PhysicalStatus);
 
                 if (!success)
                 {
                     ModelState.AddModelError(string.Empty, error ?? "Falha ao salvar o equipamento.");
                     await LoadDropdownsAsync();
-                    return View(equipment);
+                    return View(viewModel);
                 }
 
                 TempData["Success"] = "Equipamento adicionado com sucesso.";
@@ -104,7 +123,7 @@ namespace UCLoan.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Erro inesperado: " + ex.Message);
                 await LoadDropdownsAsync();
-                return View(equipment);
+                return View(viewModel);
             }
         }
 
