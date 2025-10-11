@@ -25,8 +25,8 @@ namespace UCLoan.Services
         public Task<List<EquipmentConstants.EquipmentLoanStatus>> GetAllEquipmentLoanStatus(CancellationToken ct = default) =>
             _equipmentRepository.GetAllEquipmentLoanStatus(ct);
 
-        public Task<Equipment?> GetEquipmentModel(Equipment equipment, CancellationToken ct = default) =>
-            _equipmentRepository.GetEquipmentModel(equipment, ct);
+        public Task<EquipmentModel?> GetModelOfEquipment(Equipment equipment, CancellationToken ct = default) =>
+            _equipmentRepository.GetModelOfEquipment(equipment, ct);
 
         public async Task<List<SelectListItem>> GetAllEquipmentModelsSelectListAsync()
         {
@@ -73,25 +73,32 @@ namespace UCLoan.Services
             _equipmentRepository.GetByIdAsync(id, ct);
 
         public async Task<(bool Success, string? Error)> CreateAsync(
-            EquipmentModel equipmentModel,
+            int equipmentModelId,
             int equipmentId,
             string description,
             EquipmentConstants.EquipmentPhysicalStatus physicalStatus,
             CancellationToken ct = default)
         {
-            if (equipmentModel == null)
+            if (equipmentModelId <= 0)
             {
                 return (false, "O modelo escolhido não existe.");
+            }
+
+            var model = await _equipmentRepository.GetModelByIdAsync(equipmentModelId);
+
+            if (model == null)
+            {
+                return (false, "Modelo inválido");
             }
 
             var equipment = new Equipment
             {
                 EquipmentId = equipmentId,
-                Description = description.Trim(),
-                PhysicalStatus = physicalStatus,
                 LoanStatus = EquipmentConstants.EquipmentLoanStatus.Available,
-                EquipmentModelId = equipmentModel.Id,
-                EquipmentModel = equipmentModel,
+                PhysicalStatus = physicalStatus,
+                Description = description.Trim(),
+                EquipmentModelId = equipmentModelId,
+                EquipmentModel = model
             };
 
             await _equipmentRepository.AddAsync(equipment, ct);
