@@ -1,7 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace UCLoan.Extensions
 {
@@ -20,5 +21,23 @@ namespace UCLoan.Extensions
 
             return enumValue.ToString();
         }
+    
+         public static string GetDisplayNameViews(Enum enumValue)
+            {
+                return enumValue.GetType()
+                    .GetMember(enumValue.ToString())
+                    .First()
+                    .GetCustomAttribute<DisplayAttribute>()?
+                    .GetName() ?? enumValue.ToString();
+            }
+            public static Dictionary<int, string> GetDisplayNames<TEnum>() where TEnum : Enum
+            {
+                return Enum.GetValues(typeof(TEnum))
+                    .Cast<TEnum>()
+                    .ToDictionary(
+                        e => Convert.ToInt32(e),
+                        e => GetDisplayName(e)
+                    );
+            }
+        }
     }
-}
