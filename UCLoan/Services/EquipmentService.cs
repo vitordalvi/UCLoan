@@ -112,6 +112,7 @@ namespace UCLoan.Services
             int equipmentId,
             string description,
             EquipmentConstants.EquipmentPhysicalStatus physicalStatus,
+            EquipmentConstants.EquipmentLoanStatus loanStatus,
             int equipmentModelId,
             CancellationToken ct = default)
         {
@@ -126,6 +127,7 @@ namespace UCLoan.Services
             entity.EquipmentId = equipmentId;
             entity.Description = description?.Trim() ?? string.Empty;
             entity.PhysicalStatus = physicalStatus;
+            entity.LoanStatus = loanStatus;
             entity.EquipmentModel = model;
 
             await _equipmentRepository.UpdateAsync(entity, ct);

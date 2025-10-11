@@ -18,6 +18,8 @@ namespace UCLoan.Controllers
             _equipmentService = equipmentService;
         }
 
+        // <-------------- EQUIPAMENTOS (GET) -------------->
+
         [HttpGet]
         public async Task<IActionResult> ManageEquipment(CancellationToken ct)
         {
@@ -31,11 +33,26 @@ namespace UCLoan.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ManageEquipmentModels(CancellationToken ct)
+        public async Task<IActionResult> AddEquipment()
         {
-            var models = await _equipmentService.GetAllEquipmentModelsAsync();
-            return View(models);
+            await LoadDropdownsAsync();
+            return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> EditEquipment(int id)
+        {
+            if (id <= 0) return NotFound();
+
+            var equipment = await _equipmentService.GetByIdAsync(id);
+
+            if (equipment == null) return NotFound();
+
+            await LoadDropdownsAsync();
+            return View(equipment);
+        }
+
+        // <-------------- EQUIPAMENTOS (POST) -------------->
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -44,7 +61,7 @@ namespace UCLoan.Controllers
             if (id <= 0)
             {
                 TempData["Error"] = "Id inválido.";
-                return RedirectToAction(nameof(ManageEquipmentModels));
+                return RedirectToAction(nameof(ManageEquipment));
             }
 
             var (success, error) = await _equipmentService.DeleteAsync(id);
@@ -58,37 +75,7 @@ namespace UCLoan.Controllers
                 TempData["Success"] = "Equipamento deletado com sucesso.";
             }
 
-            return RedirectToAction(nameof(ManageEquipmentModels));
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteEquipmentModels(int id, CancellationToken ct)
-        {
-            if (id <= 0)
-            {
-                TempData["Error"] = "Id inválido.";
-                return RedirectToAction(nameof(ManageEquipmentModels));
-            }
-
-            var (success, error) = await _equipmentService.DeleteEquipmentModelAsync(id);
-
-            if (!success)
-            {
-                TempData["Error"] = error;
-            } else
-            {
-                TempData["Success"] = "Modelo de equipamento deletado com sucesso.";
-            }
-
-            return RedirectToAction(nameof(ManageEquipmentModels));
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> AddEquipment()
-        {
-            await LoadDropdownsAsync();
-            return View();
+            return RedirectToAction(nameof(ManageEquipment));
         }
 
         [HttpPost]
@@ -127,10 +114,75 @@ namespace UCLoan.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditEquipment(Equipment equipment)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "Algo não está valido.";
+                await LoadDropdownsAsync();
+                return View(equipment);
+            }
+
+            var (success, error) = await _equipmentService.UpdateAsync(
+                equipment.Id,
+                equipment.EquipmentId,
+                equipment.Description ?? string.Empty,
+                equipment.PhysicalStatus,
+                equipment.LoanStatus,
+                equipment.EquipmentModelId);
+
+            if (!success)
+            {
+                ModelState.AddModelError(string.Empty, error ?? "Falha ao atualizar o equipamento.");
+                TempData["Error"] = "Erro ao salvar.";
+                await LoadDropdownsAsync();
+                return View(equipment);
+            }
+
+            TempData["Success"] = "Equipamento atualizado com sucesso.";
+            return RedirectToAction(nameof(ManageEquipment));
+        }
+
+        // <-------------- MODELO EQUIPAMENTO (GET) -------------->
+
+        [HttpGet] 
+        public async Task<IActionResult> ManageEquipmentModels(CancellationToken ct)
+        {
+            var models = await _equipmentService.GetAllEquipmentModelsAsync();
+            return View(models);
+        }
+
         [HttpGet]
         public async Task<IActionResult> AddEquipmentModel()
         {
             return View();
+        }
+
+        // <-------------- MODELO EQUIPAMENTO (POST) -------------->
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteEquipmentModels(int id, CancellationToken ct)
+        {
+            if (id <= 0)
+            {
+                TempData["Error"] = "Id inválido.";
+                return RedirectToAction(nameof(ManageEquipmentModels));
+            }
+
+            var (success, error) = await _equipmentService.DeleteEquipmentModelAsync(id);
+
+            if (!success)
+            {
+                TempData["Error"] = error;
+            } else
+            {
+                TempData["Success"] = "Modelo de equipamento deletado com sucesso.";
+            }
+
+            return RedirectToAction(nameof(ManageEquipmentModels));
         }
 
         [HttpPost]
@@ -145,6 +197,8 @@ namespace UCLoan.Controllers
 
             return RedirectToAction(nameof(ManageEquipmentModels));
         }
+
+        // <-------------- UTILS -------------->
 
         private async Task LoadDropdownsAsync()
         {
