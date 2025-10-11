@@ -25,6 +25,9 @@ namespace UCLoan.Services
         public Task<List<EquipmentConstants.EquipmentLoanStatus>> GetAllEquipmentLoanStatus(CancellationToken ct = default) =>
             _equipmentRepository.GetAllEquipmentLoanStatus(ct);
 
+        public Task<Equipment?> GetEquipmentModel(Equipment equipment, CancellationToken ct = default) =>
+            _equipmentRepository.GetEquipmentModel(equipment, ct);
+
         public async Task<List<SelectListItem>> GetAllEquipmentModelsSelectListAsync()
         {
             var allModels = await _equipmentRepository.GetAllEquipmentModelsAsync();

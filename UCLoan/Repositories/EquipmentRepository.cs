@@ -26,6 +26,11 @@ namespace UCLoan.Repositories
             .Include(e => e.EquipmentModel)
             .FirstOrDefaultAsync(e => e.Id == id, ct);
 
+        public Task<Equipment?> GetEquipmentModel(Equipment equipment, CancellationToken ct = default) =>
+            _context.Set<Equipment>()
+            .Include(e => e.EquipmentModel)
+            .FirstOrDefaultAsync(e => e.Id == equipment.Id, ct);
+
         public async Task AddAsync(Equipment equipment, CancellationToken ct = default)
         {
             await _context.Set<Equipment>().AddAsync(equipment, ct);
@@ -76,7 +81,6 @@ namespace UCLoan.Repositories
             _context.Set<EquipmentModel>()
                     .Include(m => m.Equipments)
                     .FirstOrDefaultAsync(m => m.Id == id, ct);
-        public Task<Equipment> GetEquipmentModel(Equipment equipment, Cancel)
 
         public async Task AddModelAsync(EquipmentModel model, CancellationToken ct = default)
         {

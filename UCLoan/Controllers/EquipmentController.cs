@@ -67,7 +67,7 @@ namespace UCLoan.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddEquipment([Bind("EquipmentModelId,EquipmentId,Description,PhysicalStatus")] Models.Equipment equipment)
         {
-            var model = await _equipmentService.GetModel(equipment.EquipmentModel);
+            var model = await _equipmentService.GetEquipmentModel(equipment);
 
             if (equipment.EquipmentModelId <= 0)
             {
