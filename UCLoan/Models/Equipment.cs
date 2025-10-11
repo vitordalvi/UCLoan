@@ -21,7 +21,6 @@ namespace UCLoan.Models
         public EquipmentConstants.EquipmentPhysicalStatus PhysicalStatus { get; set; }
         [StringLength(255)]
         public string Description { get; set; } = string.Empty;
-        [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Selecione um modelo válido.")]
         public int EquipmentModelId { get; set; }
         public EquipmentModel EquipmentModel { get; set; } = null!;
