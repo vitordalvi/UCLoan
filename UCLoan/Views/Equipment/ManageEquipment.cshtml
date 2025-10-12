@@ -41,6 +41,7 @@
                 <th>Modelo</th>
                 <th>Situação</th>
                 <th>Estado físico</th>
+                <th>Descrição</th>
                 <th class="text-center" style="width:180px;">Ações</th>
             </tr>
         </thead>
@@ -51,9 +52,10 @@
                 {
                     <tr>
                         <td>@eq.EquipmentId</td>
-                        <td>@eq.EquipmentModel?.Name</td>
+                        <td>@eq.EquipmentModel?.Manufacturer @eq.EquipmentModel?.Name</td>
                         <td>@ViewBag.LoanStatusDisplay[(int)eq.LoanStatus]</td>
                         <td>@ViewBag.PhysicalStatusDisplay[(int)eq.PhysicalStatus]</td>
+                        <td>@eq.Description</td>
                         <td class="text-center">
                             <a class="btn btn-sm btn-primary"
                                asp-controller="Equipment"
