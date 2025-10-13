@@ -116,29 +116,32 @@ namespace UCLoan.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditEquipment(Equipment equipment)
+        public async Task<IActionResult> EditEquipment(EditEquipmentViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
                 TempData["Error"] = "Algo não está valido.";
+
+
+                ModelState.AddModelError(string.Empty, "Dados inválidos. Verifique os campos.");
                 await LoadDropdownsAsync();
-                return View(equipment);
+                return View(viewModel);
             }
 
             var (success, error) = await _equipmentService.UpdateAsync(
-                equipment.Id,
-                equipment.EquipmentId,
-                equipment.Description ?? string.Empty,
-                equipment.PhysicalStatus,
-                equipment.LoanStatus,
-                equipment.EquipmentModelId);
+                viewModel.Id,
+                viewModel.EquipmentId,
+                viewModel.Description ?? string.Empty,
+                viewModel.PhysicalStatus,
+                viewModel.LoanStatus,
+                viewModel.EquipmentModelId);
 
             if (!success)
             {
                 ModelState.AddModelError(string.Empty, error ?? "Falha ao atualizar o equipamento.");
                 TempData["Error"] = "Erro ao salvar.";
                 await LoadDropdownsAsync();
-                return View(equipment);
+                return View(viewModel);
             }
 
             TempData["Success"] = "Equipamento atualizado com sucesso.";
