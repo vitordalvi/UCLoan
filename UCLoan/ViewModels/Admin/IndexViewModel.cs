@@ -11,6 +11,10 @@ namespace UCLoan.ViewModels.Admin
         // Cards usuários
         [Display(Name = "Usuários Cadastrados")]
         public int TotalUsers { get; set; } = 0;
+        [Display(Name = "Administradores")]
+        public int TotalAdmins { get; set; } = 0;
+        [Display(Name = "Novos usuários")]
+        public int NewUsers { get; set; } = 0;
 
         //// Cards empréstimos
         //[Display(Name = "Total de Empréstimos")]
