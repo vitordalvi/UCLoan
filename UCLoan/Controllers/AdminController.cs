@@ -4,6 +4,7 @@ using System.Security.Claims;
 using UCLoan.Models;
 using UCLoan.Repositories;
 using UCLoan.Services;
+using UCLoan.ViewModels.Admin;
 
 namespace UCLoan.Controllers
 {
@@ -11,25 +12,35 @@ namespace UCLoan.Controllers
     public class AdminController : Controller
     {
         private readonly AdminService _adminService;
-        private readonly IAdminRepository _adminRepository;
+        private readonly EquipmentService _equipmentService;
 
-        public AdminController(AdminService adminService, IAdminRepository adminRepository)
+        public AdminController(AdminService adminService, EquipmentService equipmentService)
         {
             _adminService = adminService;
-            _adminRepository = adminRepository;
+            _equipmentService = equipmentService;
+        }
+
+        // <-------------- INDEX (GET) -------------->
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var totalUsers = await _adminService.GetUsersAsync();
+            var allEquipments = await _equipmentService.GetAllEquipmentAsync();
+
+            var viewModel = new IndexViewModel
+            {
+                TotalUsers = totalUsers.Count,
+                AllEquipments = allEquipments.Count
+            };
+
+            return View(viewModel);
         }
 
         public async Task<IActionResult> Users()
         {
             var users = await _adminService.GetUsersAsync();
             return View(users);
-        }
-
-        public async Task<IActionResult> Index()
-        {
-            var user = await _adminService.GetUsersAsync();
-
-            return View();
         }
 
         [HttpGet]
