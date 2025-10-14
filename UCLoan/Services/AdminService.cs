@@ -15,6 +15,9 @@ namespace UCLoan.Services
         public Task<List<ApplicationUser>> GetUsersAsync() =>
             _adminRepository.GetUsersAsync();
 
+        public Task<List<ApplicationUser>> GetUsersInRoleAsync(string roleName) =>
+            _adminRepository.GetUsersInRoleAsync(roleName);
+
         public Task<ApplicationUser?> GetByIdAsync(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -23,7 +26,12 @@ namespace UCLoan.Services
             }
             return _adminRepository.GetByIdAsync(id);
         }
-            
+
+        public Task<List<ApplicationUser>> GetUserDateTime(DateTime? time = null) =>
+            _adminRepository.GetUserDateTime(time);
+
+        public Task<List<ApplicationUser>> GetNewUsers() =>
+            _adminRepository.GetNewUsers(); 
 
         public async Task<(bool Success, IEnumerable<string> Erros)> UpdateDataAsync(ApplicationUser postedUser, IEnumerable<string?> selectedRoles)
         {

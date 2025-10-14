@@ -6,7 +6,10 @@ namespace UCLoan.Repositories
     public interface IAdminRepository
     {
         Task<List<ApplicationUser>> GetUsersAsync();
+        Task<List<ApplicationUser>> GetUsersInRoleAsync(string roleName);
         Task<ApplicationUser?> GetByIdAsync(string id);
+        Task<List<ApplicationUser>> GetUserDateTime(DateTime? time = null);
+        Task<List<ApplicationUser>> GetNewUsers();
         Task<IdentityResult> UpdateAsync(ApplicationUser user);
         Task<IdentityResult> DeleteAsync(ApplicationUser user);
         Task<IList<string>> GetAllRolesAsync();
