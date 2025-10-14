@@ -1,0 +1,43 @@
+﻿@using UCLoan.ViewModels.Equipment
+@model AddModelViewModel
+
+@{
+    ViewData["Title"] = "Criar modelo de Equipamento";
+
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">@ViewData["Title"]</h3>
+
+                    <form asp-controller="Equipment"
+                          asp-action="AddEquipmentModel"
+                          method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Name" class="form-control" placeholder="Digite o modelo" />
+                            <label asp-for="Name">Modelo</label>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Manufacturer" class="form-control" placeholder="Digite a marca" />
+                            <label asp-for="Manufacturer">Marca</label>
+                            <span asp-validation-for="Manufacturer" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="w-100 btn btn-lg btn-primary">Salvar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

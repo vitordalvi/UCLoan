@@ -1,7 +1,22 @@
-﻿@model UCLoan.Models.EquipmentModel
-@{
-    ViewData["Title"] = "Criar modelo de Equipamento";
+﻿@using UCLoan.Models
+@model EquipmentModel
 
+@{
+    ViewData["Title"] = "Editar Modelo";
+
+    var allEquipmentModels = (IEnumerable<SelectListItem>)ViewBag.AllEquipmentModels;
+    var allLoanStatus = (IEnumerable<SelectListItem>)ViewBag.AllLoanStatus;
+    var allPhysicalStatus = (IEnumerable<SelectListItem>)ViewBag.AllPhysicalStatus;
+
+    if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
 }
 
 <div class="container mt-5">
@@ -12,26 +27,23 @@
                     <h3 class="text-center mb-4">@ViewData["Title"]</h3>
 
                     <form asp-controller="Equipment"
-                          asp-action="AddEquipmentModel"
+                          asp-action="EditModel"
                           method="post">
                         @Html.AntiForgeryToken()
-
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
-
                         <input type="hidden" asp-for="Id" />
 
                         <div class="form-floating mb-3">
-                            <input asp-for="Name" class="form-control" placeholder="Digite o modelo" />
-                            <label asp-for="Name">Modelo</label>
+                            <input asp-for="Name" class="form-control" placeholder="Altere o nome do modelo" />
+                            <label asp-for="Name">Nome</label>
                             <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
 
                         <div class="form-floating mb-3">
-                            <input asp-for="Manufacturer" class="form-control" placeholder="Digite a marca" />
-                            <label asp-for="Manufacturer">Marca</label>
+                            <input asp-for="Manufacturer" class="form-control" placeholder="Altere o nome do fabricante" />
+                            <label asp-for="Manufacturer">Fabricante</label>
                             <span asp-validation-for="Manufacturer" class="text-danger"></span>
                         </div>
-
                         <button type="submit" class="w-100 btn btn-lg btn-primary">Salvar</button>
                     </form>
                 </div>

@@ -26,7 +26,7 @@
         </a>
         <a class="btn btn-primary"
            asp-controller="Equipment"
-           asp-action="AddEquipmentModel">
+           asp-action="AddModel">
             Adicionar Modelo
         </a>
     </div>
@@ -51,11 +51,11 @@
                         <td class="text-center">
                             <a class="btn btn-sm btn-primary"
                                asp-controller="Equipment"
-                               asp-action="EditEquipmentModels"
+                               asp-action="EditModel"
                                asp-route-id="@eq.Id">
                                 Editar
                             </a>
-                            <form asp-action="DeleteEquipmentModels"
+                            <form asp-action="DeleteModel"
                                   method="post"
                                   class="d-inline"
                                   onsubmit="return confirm('Confirmar exclusão do modelo @eq.Id?');">
