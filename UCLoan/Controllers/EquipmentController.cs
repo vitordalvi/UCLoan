@@ -233,6 +233,7 @@ namespace UCLoan.Controllers
             {
                 TempData["Success"] = "Modelo de equipamento deletado com sucesso.";
             }
+            
 
             return RedirectToAction(nameof(ManageEquipmentModels));
         }
