@@ -36,6 +36,8 @@
                 <th>ID do Empréstimo</th>
                 <th>Usuário</th>
                 <th>Modelo</th>
+                <th>Início</th>
+                <th>Devolução</th>
                 <th>Descrição</th>
                 <th class="text-center" style="width:180px;">Ações</th>
             </tr>
@@ -47,9 +49,17 @@
                 {
                     <tr>
                         <td>@loan.Id</td>
-                        <td>@loan.User.Email</td>
-                        <td>@loan.StartDate</td>
-                        <td>@loan.EndDate</td>
+                        <td>@(loan.User?.Email ?? "Usuário não encontrado")</td>
+                        <td>
+                            @(
+                                loan.Equipment?.EquipmentModel != null
+                                    ? $"{loan.Equipment.EquipmentModel.Manufacturer} {loan.Equipment.EquipmentModel.Name}"
+                                    : "Modelo não encontrado"
+                            )
+                        </td>
+                        <td>@loan.StartDate.ToString("dd/MM/yyyy")</td>
+                        <td>@(loan.EndDate.HasValue ? loan.EndDate.Value.ToString("dd/MM/yyyy") : "Não informado")</td>
+                        <td>@loan.Description</td>
                         <td class="text-center">
                             <a class="btn btn-sm btn-primary"
                                asp-controller="Loan"
