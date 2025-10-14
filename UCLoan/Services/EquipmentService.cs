@@ -210,6 +210,30 @@ namespace UCLoan.Services
             return saved ? (true, null) : (false, "Falha ao salvar modelo.");
         }
 
+        public async Task<(bool Success, string? Error)> UpdateModelAsync(
+            int id,
+            string name,
+            string manufacturer,
+            CancellationToken ct = default)
+        {
+            var model = await _equipmentRepository.GetModelByIdAsync(id, ct);
+            if (model == null)
+                return (false, "Modelo não encontrado.");
+
+            if (string.IsNullOrWhiteSpace(name))
+                return (false, "Nome do modelo é obrigatório.");
+
+            if (string.IsNullOrWhiteSpace(manufacturer))
+                return (false, "Fabricante é obrigatório.");
+
+            model.Name = name.Trim();
+            model.Manufacturer = manufacturer.Trim();
+
+            await _equipmentRepository.UpdateModelAsync(model, ct);
+            var saved = await _equipmentRepository.SaveChangesAsync(ct);
+            return saved ? (true, null) : (false, "Nenhuma alteração foi confirmada.");
+        }
+
         public Task<EquipmentModel?> GetModelByIdAsync(int id, CancellationToken ct = default) =>
                         _equipmentRepository.GetModelByIdAsync(id, ct);
 
