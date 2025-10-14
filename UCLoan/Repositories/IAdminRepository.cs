@@ -8,6 +8,7 @@ namespace UCLoan.Repositories
         Task<List<ApplicationUser>> GetUsersAsync();
         Task<List<ApplicationUser>> GetUsersInRoleAsync(string roleName);
         Task<ApplicationUser?> GetByIdAsync(string id);
+        Task<ApplicationUser?> GetByEmailAsync(string email);
         Task<List<ApplicationUser>> GetUserDateTime(DateTime? time = null);
         Task<List<ApplicationUser>> GetNewUsers();
         Task<IdentityResult> UpdateAsync(ApplicationUser user);

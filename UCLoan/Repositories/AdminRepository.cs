@@ -22,6 +22,10 @@ namespace UCLoan.Repositories
             (await _userManager.GetUsersInRoleAsync(roleName)).ToList();
         public Task<ApplicationUser?> GetByIdAsync(string id) =>
             _userManager.FindByIdAsync(id);
+
+        public Task<ApplicationUser?> GetByEmailAsync(string email) =>
+            _userManager.FindByEmailAsync(email);
+
         public async Task<List<ApplicationUser>> GetUserDateTime(DateTime? time = null)
         {
             // Se nenhum valor for fornecido, ele define o padrão como 7 dias atrás
@@ -38,7 +42,6 @@ namespace UCLoan.Repositories
                 .Where(e => e.CreatedAt <= DateTime.UtcNow.AddDays(7))
                 .ToListAsync();
         }
-
 
         public Task<IdentityResult> UpdateAsync(ApplicationUser user) =>
             _userManager.UpdateAsync(user);
