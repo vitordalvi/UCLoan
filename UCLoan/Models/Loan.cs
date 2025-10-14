@@ -11,7 +11,7 @@ namespace UCLoan.Models
 
         [Required]
         public ApplicationUser User { get; set; } = null!;
-        public DateTime StartDate { get; set; } = DateTime.Now;
+        public DateTime StartDate { get; set; } = DateTime.UtcNow;
         public DateTime? EndDate { get; set; }
     }
 }
