@@ -26,11 +26,16 @@ namespace UCLoan.Controllers
         public async Task<IActionResult> Index()
         {
             var totalUsers = await _adminService.GetUsersAsync();
+            var totalAdmins = await _adminService.GetUsersInRoleAsync("Admin");
+            var newUsers = await _adminService.GetNewUsers();
             var allEquipments = await _equipmentService.GetAllEquipmentAsync();
+            
 
             var viewModel = new IndexViewModel
             {
                 TotalUsers = totalUsers.Count,
+                TotalAdmins = totalAdmins.Count,
+                NewUsers = newUsers.Count,
                 AllEquipments = allEquipments.Count
             };
 
