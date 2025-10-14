@@ -17,7 +17,10 @@ namespace UCLoan.Repositories
 
         public  Task<List<Loan>> GetAllLoansAsync(CancellationToken ct = default) =>
             _context.Set<Loan>()
-            .ToListAsync(ct);
+                .Include(l => l.User)
+                .Include(l => l.Equipment)
+                    .ThenInclude(e => e.EquipmentModel)
+                .ToListAsync(ct);
 
         public Task<Loan?> GetByIdAsync(int id, CancellationToken ct = default) =>
             _context.Set<Loan>()
