@@ -1,6 +1,9 @@
-﻿using UCLoan.Repositories;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using UCLoan.Constants;
+using UCLoan.Extensions;
 using UCLoan.Models;
-using Microsoft.AspNetCore.Mvc;
+using UCLoan.Repositories;
 
 namespace UCLoan.Services
 {
@@ -22,23 +25,34 @@ namespace UCLoan.Services
         public Task<Models.Loan?> GetByIdAsync(int id, CancellationToken ct = default) => 
             _loanRepository.GetByIdAsync(id, ct);
 
-        public async Task<(bool Success, string Error)> CreateAsync(string userId, 
+        public async Task<(bool Success, string Error)> CreateAsync(string userEmail,
+            int equipmentId,
             DateTime startDate,
             DateTime endDate,
-            CancellationToken ct)
+            string description,
+            CancellationToken ct = default)
         {
-            var user = _adminRepository.GetByIdAsync(userId);
+            var user =  await _adminRepository.GetByEmailAsync(userEmail);
+            var equipment = await _equipmentRepository.GetByIdAsync(equipmentId, ct);
 
-            if (user.Result == null)
+
+            if (user == null)
             {
                 return (false, "Usuário não encontrado");
             }
 
+            if (equipment == null)
+            {
+                return (false, "O equipamento é inválido.");
+            }
+
             var loan = new Loan
             {
-                User = user.Result,
+                User = user,
+                Equipment = equipment,
                 StartDate = startDate,
                 EndDate = endDate,
+                Description = description,
             };
 
             await _loanRepository.AddAsync(loan, ct);
@@ -78,6 +92,22 @@ namespace UCLoan.Services
             await _loanRepository.DeleteAsync(loan, ct);
             var saved = await _loanRepository.SaveChangesAsync(ct);
             return saved ? (true, "Empréstimo deletado com sucesso.") : (false, "Erro ao deletar o empréstimo.");
+        }
+
+        public async Task<List<SelectListItem>> GetAllEquipmentsAvailableSelectListAsync()
+        {
+            var equipments = await _equipmentRepository.GetAllEquipmentAsync();
+
+            var availableEquipments = equipments
+                .Where(e => e.LoanStatus == EquipmentConstants.EquipmentLoanStatus.Available)
+                .Select(e => new SelectListItem
+                {
+                    Value = e.Id.ToString(),
+                    Text = $"Patrimônio: {e.EquipmentId} - {e.EquipmentModel.Manufacturer} {e.EquipmentModel?.Name}"
+                })
+                .ToList();
+
+            return availableEquipments;
         }
     }
 }
