@@ -1,4 +1,5 @@
-﻿using UCLoan.Models;
+﻿using Microsoft.IdentityModel.Tokens;
+using UCLoan.Models;
 using UCLoan.Repositories;
 
 namespace UCLoan.Services
@@ -25,6 +26,16 @@ namespace UCLoan.Services
                 return Task.FromResult<ApplicationUser?>(null);
             }
             return _adminRepository.GetByIdAsync(id);
+        }
+
+        public Task<ApplicationUser?> GetByEmailAsync(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return Task.FromResult<ApplicationUser?>(null);
+            }
+
+            return _adminRepository.GetByEmailAsync(email)!;
         }
 
         public Task<List<ApplicationUser>> GetUserDateTime(DateTime? time = null) =>
