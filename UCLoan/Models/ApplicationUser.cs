@@ -12,6 +12,9 @@ namespace UCLoan.Models
         [Required]
         [Display(Name = "CPF:")]
         public string CPF { get; set; } = string.Empty;
+        [Required]
+        [Display(Name = "Criado em:")]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<EquipmentHistory> ChangedHistories { get; set; } = new List<EquipmentHistory>();
         public ICollection<EquipmentHistory> LastUserHistories { get; set; } = new List<EquipmentHistory>();

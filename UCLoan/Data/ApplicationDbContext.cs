@@ -23,6 +23,15 @@ namespace UCLoan.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<ApplicationUser>(entity =>
+            {
+                entity.HasIndex(e => e.CPF).IsUnique();
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("GETUTCDATE()")
+                .ValueGeneratedOnAdd();
+            });
+
             modelBuilder.Entity<EquipmentHistory>()
                 .HasOne(eh => eh.ChangedBy)
                 .WithMany(u => u.ChangedHistories)
