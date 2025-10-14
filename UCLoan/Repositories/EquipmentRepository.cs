@@ -67,6 +67,7 @@ namespace UCLoan.Repositories
             return Task.FromResult(values);
         }
 
+
         // EquipmentModel
 
         public Task<List<EquipmentModel>> GetAllEquipmentModelsAsync(CancellationToken ct = default) =>
