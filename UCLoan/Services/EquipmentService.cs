@@ -83,17 +83,6 @@ namespace UCLoan.Services
             return Task.FromResult(list);
         }
 
-        public async Task<List<Equipment>> GetAllEquipmentsAvailableAsync()
-        {
-            var equipments = await _equipmentRepository.GetAllEquipmentAsync();
-
-            var availableEquipments = equipments
-                .Where(e => e.LoanStatus == EquipmentConstants.EquipmentLoanStatus.Available)
-                .ToList();
-
-            return availableEquipments;
-        }
-
         public Task<Equipment?> GetByIdAsync(int id, CancellationToken ct = default) =>
             _equipmentRepository.GetByIdAsync(id, ct);
 
