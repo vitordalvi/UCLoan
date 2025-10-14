@@ -9,11 +9,16 @@
 }
 
 <div class="container mt-4">
-    <h1 class="mb-4 fw-bold text-danger text-opacity-75">@ViewData["Title"]</h1>
+    <h1 class="fw-bold text-danger text-opacity-75">@ViewData["Title"]</h1>
+    <a class="btn btn-outline-primary"
+       asp-controller="Home"
+       asp-action="Index">
+        Visão de Usuário
+    </a>
 
     <!-------------- USUÁRIOS -------------->
 
-    <section class="mb-5">
+    <section class="mb-5 mt-3">
         <h2 class="mb-4">Usuários</h2>
         <div class="row g-4">
             <div class="col-12 col-md-6 col-lg-4">
@@ -28,10 +33,10 @@
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card text-white bg-info h-100 shadow">
-                    <div class="card-header">Usuários Cadastrados</div>
+                    <div class="card-header">Administradores</div>
                     <div class="card-body">
-                        <h5 class="card-title">@Model.TotalUsers</h5>
-                        <p class="card-text">Usuários cadastrados no sistema.</p>
+                        <h5 class="card-title">@Model.TotalAdmins</h5>
+                        <p class="card-text">Admnistradores cadastrados no sistema.</p>
                         <!--<a href="/User/Index" class="btn btn-light btn-sm">Gerenciar usuários</a>-->
                     </div>
                 </div>
@@ -40,7 +45,7 @@
                 <div class="card text-white bg-info h-100 shadow">
                     <div class="card-header">Usuários Cadastrados</div>
                     <div class="card-body">
-                        <h5 class="card-title">@Model.TotalUsers</h5>
+                        <h5 class="card-title">@Model.NewUsers</h5>
                         <p class="card-text">Usuários cadastrados no sistema.</p>
                         <!--<a href="/User/Index" class="btn btn-light btn-sm">Gerenciar usuários</a>-->
                     </div>
