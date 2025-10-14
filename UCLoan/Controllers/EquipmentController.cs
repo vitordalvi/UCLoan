@@ -158,16 +158,29 @@ namespace UCLoan.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddEquipmentModel()
+        public async Task<IActionResult> AddModel()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditModel(int id)
+        {
+            if (id <= 0) return NotFound();
+
+            var model = await _equipmentService.GetModelByIdAsync(id);
+
+            if (model == null) return NotFound();
+
+            await LoadDropdownsAsync();
+            return View(model);
         }
 
         // <-------------- MODELO EQUIPAMENTO (POST) -------------->
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteEquipmentModels(int id, CancellationToken ct)
+        public async Task<IActionResult> DeleteModel(int id, CancellationToken ct)
         {
             if (id <= 0)
             {
@@ -189,7 +202,8 @@ namespace UCLoan.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddEquipmentModel([Bind("Name,Manufacturer")] Models.EquipmentModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddModel([Bind("Name,Manufacturer")] AddModelViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -197,6 +211,28 @@ namespace UCLoan.Controllers
             }
 
             var (success, error) = await _equipmentService.CreateModelAsync(model.Name, model.Manufacturer);
+
+            return RedirectToAction(nameof(ManageEquipmentModels));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditModel([Bind("Id,Name,Manufacturer")] EditModelViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var (success, error) = await _equipmentService.UpdateModelAsync(model.Id, model.Name, model.Manufacturer);
+
+            if (!success)
+            {
+                TempData["Error"] = error;
+            }
+            else
+            {
+                TempData["Success"] = "Modelo de equipamento deletado com sucesso.";
+            }
 
             return RedirectToAction(nameof(ManageEquipmentModels));
         }
