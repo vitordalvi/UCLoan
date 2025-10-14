@@ -1,48 +1,95 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@model UCLoan.ViewModels.Admin.IndexViewModel
+@using UCLoan.ViewModels.Admin
+@model IndexViewModel
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
 
 @{
     ViewData["Title"] = "Dashboard Admin";
-
-    string userRoles = "";
-    var user = await UserManager.GetUserAsync(User);
 }
 
 <div class="container mt-4">
-    <h1 class="mb-4">@ViewData["Title"]</h1>
-    <div class="grid text-center">
-        <div class="col-md-4">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-header">Empréstimos Ativos</div>
-                <div class="card-body">
-                    <h5 class="card-title">@Model.</h5>
-                    <p class="card-text">Você possui 5 empréstimos ativos.</p>
-                    <a href="/Loan/Index" class="btn btn-light btn-sm">Ver detalhes</a>
+    <h1 class="mb-4 fw-bold text-danger text-opacity-75">@ViewData["Title"]</h1>
+
+    <!-------------- USUÁRIOS -------------->
+
+    <section class="mb-5">
+        <h2 class="mb-4">Usuários</h2>
+        <div class="row g-4">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card text-white bg-info h-100 shadow">
+                    <div class="card-header">Usuários Cadastrados</div>
+                    <div class="card-body">
+                        <h5 class="card-title">@Model.TotalUsers</h5>
+                        <p class="card-text">Usuários cadastrados no sistema.</p>
+                        <!--<a href="/User/Index" class="btn btn-light btn-sm">Gerenciar usuários</a>-->
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card text-white bg-info h-100 shadow">
+                    <div class="card-header">Usuários Cadastrados</div>
+                    <div class="card-body">
+                        <h5 class="card-title">@Model.TotalUsers</h5>
+                        <p class="card-text">Usuários cadastrados no sistema.</p>
+                        <!--<a href="/User/Index" class="btn btn-light btn-sm">Gerenciar usuários</a>-->
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card text-white bg-info h-100 shadow">
+                    <div class="card-header">Usuários Cadastrados</div>
+                    <div class="card-body">
+                        <h5 class="card-title">@Model.TotalUsers</h5>
+                        <p class="card-text">Usuários cadastrados no sistema.</p>
+                        <!--<a href="/User/Index" class="btn btn-light btn-sm">Gerenciar usuários</a>-->
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-header">Equipamentos Disponíveis</div>
-                <div class="card-body">
-                    <h5 class="card-title">12</h5>
-                    <p class="card-text">Há 12 equipamentos disponíveis para empréstimo.</p>
-                    <a href="/Equipment/Index" class="btn btn-light btn-sm">Ver equipamentos</a>
+    </section>
+
+    <!-------------- EQUIPAMENTOS --------------> 
+    <section class="mb-5">
+        <h2 class="mb-4">Equipamentos</h2>
+
+        <div class="row g-4">
+            <!-- Card 1 -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card text-white bg-primary h-100 shadow">
+                    <div class="card-header">Equipamentos Cadastrados</div>
+                    <div class="card-body">
+                        <h5 class="card-title">@Model.AllEquipments</h5>
+                        <p class="card-text">Equipamentos cadastrados no sistema.</p>
+                        <!--<a href="/Equipment/Index" class="btn btn-light btn-sm">Ver detalhes</a>-->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card text-white bg-warning h-100 shadow">
+                    <div class="card-header">Equipamentos Emprestados</div>
+                    <div class="card-body">
+                        <h5 class="card-title">@* @Model.LoanedEquipments *@</h5>
+                        <p class="card-text">Equipamentos atualmente em uso.</p>
+                        <!--<a href="/Loan/Index" class="btn btn-dark btn-sm">Ver detalhes</a>-->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 (exemplo adicional) -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card text-white bg-danger h-100 shadow">
+                    <div class="card-header">Equipamentos em Manutenção</div>
+                    <div class="card-body">
+                        <h5 class="card-title">@* @Model.LoanedEquipments *@</h5>
+                        <p class="card-text">Equipamentos atualmente em manutenção.</p>
+                        <!--<a href="/Loan/Index" class="btn btn-dark btn-sm">Ver detalhes</a>-->
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-info mb-3">
-                <div class="card-header">Seu Perfil</div>
-                <div class="card-body">
-                    <h5 class="card-title">E-mail: @User.Identity.Name</h5>
-                    <h5 class="card-title">Cargo: @userRoles</h5>
-                    <p class="card-text">Gerencie suas informações de perfil.</p>
-                    <a href="/Identity/Account/Manage" class="btn btn-light btn-sm">Editar perfil</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    </section>
+
 </div>
