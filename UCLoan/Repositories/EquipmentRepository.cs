@@ -86,6 +86,11 @@ namespace UCLoan.Repositories
             await _context.Set<EquipmentModel>().AddAsync(model, ct);
         }
 
+        public async Task UpdateModelAsync(EquipmentModel model, CancellationToken ct = default)
+        {
+            _context.Set<EquipmentModel>().Update(model);
+        }
+
         public Task DeleteEquipmentModelAsync(EquipmentModel equipmentModel, CancellationToken ct)
         {
             _context.Set<EquipmentModel>().Remove(equipmentModel);

@@ -16,6 +16,7 @@ namespace UCLoan.Repositories
         Task<List<EquipmentModel>> GetAllEquipmentModelsAsync(CancellationToken ct = default);
         Task<EquipmentModel?> GetModelByIdAsync(int id, CancellationToken ct = default);
         Task AddModelAsync(EquipmentModel model, CancellationToken ct = default);
+        Task UpdateModelAsync(EquipmentModel model, CancellationToken ct = default);
         Task DeleteEquipmentModelAsync(EquipmentModel model, CancellationToken ct = default);
         Task<bool> SaveChangesAsync(CancellationToken ct = default);
     }
