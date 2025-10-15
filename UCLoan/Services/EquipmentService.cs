@@ -69,6 +69,18 @@ namespace UCLoan.Services
             return Task.FromResult(list);
         }
 
+        public async Task<List<Equipment>> GetAllMaintanceEquipments()
+        {
+            var equipments = await _equipmentRepository.GetAllEquipmentAsync();
+
+            var maintanceEquipments = equipments
+                .Where(e => e.PhysicalStatus == EquipmentConstants.EquipmentPhysicalStatus.Broken)
+                .ToList();
+
+            return maintanceEquipments;
+        }
+            
+
         public Task GetEquipmentsAvailableSelectListAsync()
         {
             var list = Enum.GetValues(typeof(EquipmentConstants.EquipmentLoanStatus))
@@ -126,7 +138,6 @@ namespace UCLoan.Services
             int equipmentId,
             string description,
             EquipmentConstants.EquipmentPhysicalStatus physicalStatus,
-            EquipmentConstants.EquipmentLoanStatus loanStatus,
             int equipmentModelId,
             CancellationToken ct = default)
         {
@@ -138,10 +149,10 @@ namespace UCLoan.Services
             if (model == null)
                 return (false, "Modelo informado não existe.");
 
+
             entity.EquipmentId = equipmentId;
             entity.Description = description?.Trim() ?? string.Empty;
             entity.PhysicalStatus = physicalStatus;
-            entity.LoanStatus = loanStatus;
             entity.EquipmentModel = model;
 
             await _equipmentRepository.UpdateAsync(entity, ct);
