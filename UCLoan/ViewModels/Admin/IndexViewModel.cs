@@ -17,12 +17,12 @@ namespace UCLoan.ViewModels.Admin
         public int NewUsers { get; set; } = 0;
 
         //// Cards empréstimos
-        //[Display(Name = "Total de Empréstimos")]
-        //public int TotalLoans { get; set; }
-        //[Display(Name = "Empréstimos Atuais")]
-        //public int CurrentLoans { get; set; }
-        //[Display(Name = "Empréstimos Atrasados")]
-        //public int LateLoans { get; set; }
+        [Display(Name = "Total de Empréstimos")]
+        public int TotalLoans { get; set; }
+        [Display(Name = "Empréstimos Atuais")]
+        public int CurrentLoans { get; set; }
+        [Display(Name = "Empréstimos Atrasados")]
+        public int LateLoans { get; set; }
 
         // Cards equipamentos
         [Display(Name = "Total de Equipamentos")]
