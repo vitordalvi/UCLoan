@@ -25,7 +25,7 @@ namespace UCLoan.Controllers
         {
             var equipments = await _equipmentService.GetAllEquipmentAsync(ct);
 
-            // Gera dicionários de display names para os enums
+            // Gera display names para os enums
             ViewBag.LoanStatusDisplay = EnumExtensions.GetDisplayNames<EquipmentConstants.EquipmentLoanStatus>();
             ViewBag.PhysicalStatusDisplay = EnumExtensions.GetDisplayNames<EquipmentConstants.EquipmentPhysicalStatus>();
 
@@ -122,7 +122,6 @@ namespace UCLoan.Controllers
             {
                 TempData["Error"] = "Algo não está valido.";
 
-
                 ModelState.AddModelError(string.Empty, "Dados inválidos. Verifique os campos.");
                 await LoadDropdownsAsync();
                 return View(viewModel);
@@ -133,7 +132,6 @@ namespace UCLoan.Controllers
                 viewModel.EquipmentId,
                 viewModel.Description ?? string.Empty,
                 viewModel.PhysicalStatus,
-                viewModel.LoanStatus,
                 viewModel.EquipmentModelId);
 
             if (!success)
