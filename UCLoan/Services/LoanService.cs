@@ -46,6 +46,8 @@ namespace UCLoan.Services
                 return (false, "O equipamento é inválido.");
             }
 
+            equipment.LoanStatus = EquipmentConstants.EquipmentLoanStatus.Borrowed;
+
             var loan = new Loan
             {
                 User = user,
@@ -108,6 +110,34 @@ namespace UCLoan.Services
                 .ToList();
 
             return availableEquipments;
+        }
+
+        public async Task<List<Equipment>> GetAllActiveLoans()
+        {
+            var equipments = await _equipmentRepository.GetAllEquipmentAsync();
+            var statusList = new[]
+            {
+                EquipmentConstants.EquipmentLoanStatus.Borrowed,
+                EquipmentConstants.EquipmentLoanStatus.Overdue,
+                EquipmentConstants.EquipmentLoanStatus.Returned
+            };
+
+            var loanedEquipments = equipments
+                .Where(e => statusList.Contains(e.LoanStatus))
+                .ToList();
+
+            return loanedEquipments;
+        }
+
+        public async Task<List<Equipment>> GetAllOverdueLoans()
+        {
+            var equipments = await _equipmentRepository.GetAllEquipmentAsync();
+
+            var overdueLoans = equipments
+                .Where(e => e.LoanStatus == EquipmentConstants.EquipmentLoanStatus.Overdue)
+                .ToList();
+
+            return overdueLoans;
         }
     }
 }
