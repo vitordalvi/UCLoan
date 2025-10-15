@@ -27,7 +27,11 @@
                     <div class="card-body">
                         <h5 class="card-title">@Model.TotalUsers</h5>
                         <p class="card-text">Usuários cadastrados no sistema.</p>
-                        <!--<a href="/User/Index" class="btn btn-light btn-sm">Gerenciar usuários</a>-->
+                        <a class="btn btn-outline-light btn-sm"
+                           asp-controller="Admin"
+                           asp-action="Users">
+                            Mais informações
+                        </a>
                     </div>
                 </div>
             </div>
@@ -36,8 +40,12 @@
                     <div class="card-header">Administradores</div>
                     <div class="card-body">
                         <h5 class="card-title">@Model.TotalAdmins</h5>
-                        <p class="card-text">Admnistradores cadastrados no sistema.</p>
-                        <!--<a href="/User/Index" class="btn btn-light btn-sm">Gerenciar usuários</a>-->
+                        <p class="card-text">Administradores cadastrados no sistema.</p>
+                        <a class="btn btn-outline-light btn-sm"
+                           asp-controller="Admin"
+                           asp-action="Users">
+                            Mais informações
+                        </a>
                     </div>
                 </div>
             </div>
@@ -47,7 +55,11 @@
                     <div class="card-body">
                         <h5 class="card-title">@Model.NewUsers</h5>
                         <p class="card-text">Usuários cadastrados no sistema.</p>
-                        <!--<a href="/User/Index" class="btn btn-light btn-sm">Gerenciar usuários</a>-->
+                        <a class="btn btn-outline-light btn-sm"
+                           asp-controller="Admin"
+                           asp-action="Users">
+                            Mais informações
+                        </a>
                     </div>
                 </div>
             </div>
@@ -66,7 +78,11 @@
                     <div class="card-body">
                         <h5 class="card-title">@Model.AllEquipments</h5>
                         <p class="card-text">Equipamentos cadastrados no sistema.</p>
-                        <!--<a href="/Equipment/Index" class="btn btn-light btn-sm">Ver detalhes</a>-->
+                        <a class="btn btn-outline-light btn-sm"
+                           asp-controller="Equipment"
+                           asp-action="ManageEquipments">
+                            Mais informações
+                        </a>
                     </div>
                 </div>
             </div>
@@ -76,9 +92,13 @@
                 <div class="card text-white bg-warning h-100 shadow">
                     <div class="card-header">Equipamentos Emprestados</div>
                     <div class="card-body">
-                        <h5 class="card-title">@* @Model.LoanedEquipments *@</h5>
+                        <h5 class="card-title">@Model.LoanedEquipments</h5>
                         <p class="card-text">Equipamentos atualmente em uso.</p>
-                        <!--<a href="/Loan/Index" class="btn btn-dark btn-sm">Ver detalhes</a>-->
+                        <a class="btn btn-outline-light btn-sm"
+                           asp-controller="Loan"
+                           asp-action="Index">
+                            Mais informações
+                        </a>
                     </div>
                 </div>
             </div>
@@ -88,9 +108,68 @@
                 <div class="card text-white bg-danger h-100 shadow">
                     <div class="card-header">Equipamentos em Manutenção</div>
                     <div class="card-body">
-                        <h5 class="card-title">@* @Model.LoanedEquipments *@</h5>
+                        <h5 class="card-title">@Model.MaintanceEquipments</h5>
                         <p class="card-text">Equipamentos atualmente em manutenção.</p>
-                        <!--<a href="/Loan/Index" class="btn btn-dark btn-sm">Ver detalhes</a>-->
+                        <a class="btn btn-outline-light btn-sm"
+                           asp-controller="Equipment"
+                           asp-action="ManageEquipments">
+                            Mais informações
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-------------- EMPRÉSTIMOS -------------->
+    <section class="mb-5">
+        <h2 class="mb-4">Equipamentos</h2>
+
+        <div class="row g-4">
+            <!-- Card 1 -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card text-white bg-primary h-100 shadow">
+                    <div class="card-header">Empréstimos Cadastrados</div>
+                    <div class="card-body">
+                        <h5 class="card-title">@Model.TotalLoans</h5>
+                        <p class="card-text">Empréstimos totais no sistema.</p>
+                        <a class="btn btn-outline-light btn-sm"
+                           asp-controller="Loan"
+                           asp-action="Index">
+                            Mais informações
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card text-white bg-warning h-100 shadow">
+                    <div class="card-header">Empréstimos ativos</div>
+                    <div class="card-body">
+                        <h5 class="card-title">@Model.CurrentLoans</h5>
+                        <p class="card-text">Empréstimos em atividade.</p>
+                        <a class="btn btn-outline-light btn-sm"
+                           asp-controller="Loan"
+                           asp-action="Index">
+                            Mais informações
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 (exemplo adicional) -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card text-white bg-danger h-100 shadow">
+                    <div class="card-header">Empréstimos atrasados</div>
+                    <div class="card-body">
+                        <h5 class="card-title">@Model.MaintanceEquipments</h5>
+                        <p class="card-text">Empréstimos que estão em atraso.</p>
+                        <a class="btn btn-outline-light btn-sm"
+                           asp-controller="Loan"
+                           asp-action="Index">
+                            Mais informações
+                        </a>
                     </div>
                 </div>
             </div>
