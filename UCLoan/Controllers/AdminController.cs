@@ -13,11 +13,13 @@ namespace UCLoan.Controllers
     {
         private readonly AdminService _adminService;
         private readonly EquipmentService _equipmentService;
+        private readonly LoanService _loanService;
 
-        public AdminController(AdminService adminService, EquipmentService equipmentService)
+        public AdminController(AdminService adminService, EquipmentService equipmentService, LoanService loanService)
         {
             _adminService = adminService;
             _equipmentService = equipmentService;
+            _loanService = loanService;
         }
 
         // <-------------- INDEX (GET) -------------->
@@ -28,15 +30,29 @@ namespace UCLoan.Controllers
             var totalUsers = await _adminService.GetUsersAsync();
             var totalAdmins = await _adminService.GetUsersInRoleAsync("Admin");
             var newUsers = await _adminService.GetNewUsers();
+
             var allEquipments = await _equipmentService.GetAllEquipmentAsync();
-            
+            var loanedEquipments = await _loanService.GetAllLoansAsync();
+            var maintanceEquipments = await _equipmentService.GetAllMaintanceEquipments();
+
+            var totalLoans = await _loanService.GetAllLoansAsync();
+            var activeLoans = await _loanService.GetAllActiveLoans();
+            var overdueLoans = await _loanService.GetAllOverdueLoans();
+
 
             var viewModel = new IndexViewModel
             {
                 TotalUsers = totalUsers.Count,
                 TotalAdmins = totalAdmins.Count,
                 NewUsers = newUsers.Count,
-                AllEquipments = allEquipments.Count
+
+                AllEquipments = allEquipments.Count,
+                LoanedEquipments = loanedEquipments.Count,
+                MaintanceEquipments = maintanceEquipments.Count,
+
+                TotalLoans = totalLoans.Count,
+                CurrentLoans = activeLoans.Count,
+                LateLoans = overdueLoans.Count,
             };
 
             return View(viewModel);
