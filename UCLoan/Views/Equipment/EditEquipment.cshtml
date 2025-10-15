@@ -8,15 +8,15 @@
     var allLoanStatus = (IEnumerable<SelectListItem>)ViewBag.AllLoanStatus;
     var allPhysicalStatus = (IEnumerable<SelectListItem>)ViewBag.AllPhysicalStatus;
 
-    if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">@TempData["Error"]</div>
-    }
+}
 
-    if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">@TempData["Success"]</div>
-    }
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
 }
 
 <div class="container mt-5">
@@ -47,16 +47,6 @@
                                 <option value="">Selecione o modelo</option>
                             </select>
                             <span asp-validation-for="EquipmentModelId" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Estado de Empréstimo</label>
-                            <select asp-for="LoanStatus"
-                                    asp-items="allLoanStatus"
-                                    class="form-select">
-                                <option value="Selecione a situação">@Model.LoanStatus</option>
-                            </select>
-                            <span asp-validation-for="LoanStatus" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
