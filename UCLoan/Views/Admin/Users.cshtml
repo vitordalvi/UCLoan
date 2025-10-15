@@ -38,7 +38,9 @@
                         <td>@user.FullName</td>
                         <td>@user.CPF</td>
                         <td>@user.Email</td>
-                        <td>@user.PhoneNumber</td>
+                        <td>
+                            @(string.IsNullOrWhiteSpace(user.PhoneNumber) ? "Não informado" : user.PhoneNumber)
+                        </td>
                         <td class="text-center">
                             <a class="btn btn-sm btn-primary"
                                asp-controller="Admin"
