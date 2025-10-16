@@ -13,6 +13,7 @@ namespace UCLoan.Data
         {
         }
 
+        public DbSet<Queue> Queues { get; set; }
         public DbSet<Loan> Loans { get; set; }
         public DbSet<LoanHistory> LoanHistories { get; set; }
         public DbSet<Equipment> Equipment { get; set; }
