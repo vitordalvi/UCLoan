@@ -10,13 +10,13 @@ namespace UCLoan.Services
     public class LoanService
     {
         private readonly ILoanRepository _loanRepository;
-        private readonly IEquipmentRepository _equipmentRepository;
-        private readonly IAdminRepository _adminRepository;
-        public LoanService(ILoanRepository loanRepository, IEquipmentRepository equipmentRepository, IAdminRepository adminRepository)
+        private readonly EquipmentService _equipmentService;
+        private readonly AdminService _adminService;
+        public LoanService(ILoanRepository loanRepository, EquipmentService equipmentService, AdminService adminService)
         {
             _loanRepository = loanRepository;
-            _equipmentRepository = equipmentRepository;
-            _adminRepository = adminRepository;
+            _equipmentService = equipmentService;
+            _adminService = adminService;
         }
 
         public Task<List<Models.Loan>> GetAllLoansAsync(CancellationToken ct = default) =>
@@ -32,8 +32,8 @@ namespace UCLoan.Services
             string description,
             CancellationToken ct = default)
         {
-            var user =  await _adminRepository.GetByEmailAsync(userEmail);
-            var equipment = await _equipmentRepository.GetByIdAsync(equipmentId, ct);
+            var user =  await _adminService.GetByEmailAsync(userEmail);
+            var equipment = await _equipmentService.GetByIdAsync(equipmentId, ct);
 
 
             if (user == null)
@@ -63,20 +63,42 @@ namespace UCLoan.Services
             return saved ? (true, "Empréstimo feito com sucesso.") : (false, "Erro ao fazer o empréstimo.");
         }
 
-        public async Task<(bool Success, string Error)> UpdateAsync(int id,
+        public async Task<(bool Success, string Error)> UpdateAsync(
+            int id,
+            int equipmentId,
+            EquipmentConstants.EquipmentLoanStatus loanStatus,
+            EquipmentConstants.EquipmentPhysicalStatus physicalStatus,
             DateTime startDate,
             DateTime endDate,
+            string description,
             CancellationToken ct = default)
         {
             var loan = await _loanRepository.GetByIdAsync(id, ct);
+            var equipment = await _equipmentService.GetByEquipmentIdAsync(equipmentId, ct);
 
             if (loan == null)
             {
                 return (false, "Empréstimo não encontrado.");
             }
 
+            if (equipment == null)
+            {
+                return (false, "O equipamento é inválido.");
+            }
+
+            ////var statusResult = await _equipmentService.ChangeLoanStatusAsync(equipmentId, loanStatus, ct);
+
+            //if (!statusResult.Success)
+            //{
+            //    return (false, statusResult.Error ?? "Erro ao atualizar o status do equipamento.");
+            //}
+
+            loan.Equipment = equipment;
+            loan.Equipment.LoanStatus = loanStatus;
+            loan.Equipment.PhysicalStatus = physicalStatus;
             loan.StartDate = startDate;
             loan.EndDate = endDate;
+            loan.Description = description;
 
             await _loanRepository.UpdateAsync(loan, ct);
             var saved = await _loanRepository.SaveChangesAsync(ct);
@@ -86,11 +108,27 @@ namespace UCLoan.Services
 
         public async Task<(bool Success, string Error)> DeleteAsync(int id, CancellationToken ct = default)
         {
+            var blockedStatus = new[]
+            {
+                EquipmentConstants.EquipmentLoanStatus.Borrowed,
+                EquipmentConstants.EquipmentLoanStatus.Overdue,
+                EquipmentConstants.EquipmentLoanStatus.Unavailable
+            };
+
             var loan = await _loanRepository.GetByIdAsync(id, ct);
+            var loanStatus = await _loanRepository.GetLoanStatusAsync(id, ct);
+
             if (loan == null)
             {
                 return (false, "Empréstimo não encontrado.");
             }
+
+            if (blockedStatus.Contains(loanStatus))
+            {
+                return (false, "Não é possível deletar um empréstimo com status Emprestado, Atrasado ou Indisponível.");
+            }
+
+            
             await _loanRepository.DeleteAsync(loan, ct);
             var saved = await _loanRepository.SaveChangesAsync(ct);
             return saved ? (true, "Empréstimo deletado com sucesso.") : (false, "Erro ao deletar o empréstimo.");
@@ -98,7 +136,7 @@ namespace UCLoan.Services
 
         public async Task<List<SelectListItem>> GetAllEquipmentsAvailableSelectListAsync()
         {
-            var equipments = await _equipmentRepository.GetAllEquipmentAsync();
+            var equipments = await _equipmentService.GetAllEquipmentAsync();
 
             var availableEquipments = equipments
                 .Where(e => e.LoanStatus == EquipmentConstants.EquipmentLoanStatus.Available)
@@ -112,9 +150,37 @@ namespace UCLoan.Services
             return availableEquipments;
         }
 
+        public Task<List<SelectListItem>> GetAllPhysicalStatusSelectListAsync()
+        {
+            var list = Enum.GetValues(typeof(EquipmentConstants.EquipmentPhysicalStatus))
+                .Cast<EquipmentConstants.EquipmentPhysicalStatus>()
+                .Select(e => new SelectListItem
+                {
+                    Text = e.GetDisplayName(),
+                    Value = e.ToString()
+                })
+                .ToList();
+
+            return Task.FromResult(list);
+        }
+
+        public Task<List<SelectListItem>> GetAllLoanStatusSelectListAsync()
+        {
+            var list = Enum.GetValues(typeof(EquipmentConstants.EquipmentLoanStatus))
+                .Cast<EquipmentConstants.EquipmentLoanStatus>()
+                .Select(e => new SelectListItem
+                {
+                    Text = e.GetDisplayName(),
+                    Value = e.ToString()
+                })
+                .ToList();
+
+            return Task.FromResult(list);
+        }
+
         public async Task<List<Equipment>> GetAllActiveLoans()
         {
-            var equipments = await _equipmentRepository.GetAllEquipmentAsync();
+            var equipments = await _equipmentService.GetAllEquipmentAsync();
             var statusList = new[]
             {
                 EquipmentConstants.EquipmentLoanStatus.Borrowed,
@@ -131,7 +197,7 @@ namespace UCLoan.Services
 
         public async Task<List<Equipment>> GetAllOverdueLoans()
         {
-            var equipments = await _equipmentRepository.GetAllEquipmentAsync();
+            var equipments = await _equipmentService.GetAllEquipmentAsync();
 
             var overdueLoans = equipments
                 .Where(e => e.LoanStatus == EquipmentConstants.EquipmentLoanStatus.Overdue)
@@ -139,5 +205,24 @@ namespace UCLoan.Services
 
             return overdueLoans;
         }
+
+        public async Task<List<Equipment>> GetAllLoanStatusAsync()
+        {
+            var equipments = await _equipmentService.GetAllEquipmentAsync();
+            var statusList = new[]
+            {
+                EquipmentConstants.EquipmentLoanStatus.Borrowed,
+                EquipmentConstants.EquipmentLoanStatus.Overdue,
+                EquipmentConstants.EquipmentLoanStatus.Returned,
+                EquipmentConstants.EquipmentLoanStatus.Available,
+                EquipmentConstants.EquipmentLoanStatus.Unavailable
+            };
+            var loanedEquipmentsStatus = equipments
+                .Where(e => statusList.Contains(e.LoanStatus))
+                .ToList();
+            return loanedEquipmentsStatus;
+        }
+
+        
     }
 }
