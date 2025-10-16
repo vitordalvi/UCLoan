@@ -7,37 +7,37 @@ namespace UCLoan.Constants
         public enum EquipmentLoanStatus
         {
             [Display(Name = "Indisponível")]
-            Unavailable,
+            Unavailable = 0,
 
             [Display(Name = "Disponível")]
-            Available,
+            Available = 1,
 
             [Display(Name = "Emprestado")]
-            Borrowed,
+            Borrowed = 2,
 
             [Display(Name = "Em atraso")]
-            Overdue,
+            Overdue = 3,
 
             [Display(Name = "Devolvido")]
-            Returned,
+            Returned = 4,
         }
 
         public enum EquipmentPhysicalStatus
         {
             [Display(Name = "Excelente")]
-            Excellent,
+            Excellent = 0,
 
             [Display(Name = "Bom")]
-            Good,
+            Good = 1,
 
             [Display(Name = "Regular")]
-            Fair,
+            Fair = 2,
 
             [Display(Name = "Ruim")]
-            Poor,
+            Poor = 3,
 
             [Display(Name = "Quebrado")]
-            Broken,
+            Broken = 4,
         }
     }
 }
