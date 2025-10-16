@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using UCLoan.Constants;
 
 namespace UCLoan.Models
 {
@@ -11,6 +12,7 @@ namespace UCLoan.Models
 
         [Required]
         public ApplicationUser User { get; set; } = null!;
+        public EquipmentConstants.EquipmentLoanStatus LoanStatus { get; set; }
         [Required]
         public Equipment Equipment { get; set; } = null!;
         public DateTime StartDate { get; set; } = DateTime.UtcNow;
