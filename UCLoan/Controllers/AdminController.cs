@@ -35,7 +35,7 @@ namespace UCLoan.Controllers
             var loanedEquipments = await _loanService.GetAllLoansAsync();
             var maintanceEquipments = await _equipmentService.GetAllMaintanceEquipments();
 
-            var totalLoans = await _loanService.GetAllLoansAsync();
+            var totalLoans = await _loanService.GetAllLoanStatusAsync();
             var activeLoans = await _loanService.GetAllActiveLoans();
             var overdueLoans = await _loanService.GetAllOverdueLoans();
 
