@@ -54,7 +54,7 @@
                     <div class="card-header">Usuários Cadastrados</div>
                     <div class="card-body">
                         <h5 class="card-title">@Model.NewUsers</h5>
-                        <p class="card-text">Usuários cadastrados no sistema.</p>
+                        <p class="card-text">Usuários cadastrados em 7 dias.</p>
                         <a class="btn btn-outline-light btn-sm"
                            asp-controller="Admin"
                            asp-action="Users">
@@ -103,7 +103,7 @@
                 </div>
             </div>
 
-            <!-- Card 3 (exemplo adicional) -->
+            <!-- Card 3 -->
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card text-white bg-danger h-100 shadow">
                     <div class="card-header">Equipamentos em Manutenção</div>
@@ -123,7 +123,7 @@
 
     <!-------------- EMPRÉSTIMOS -------------->
     <section class="mb-5">
-        <h2 class="mb-4">Equipamentos</h2>
+        <h2 class="mb-4">Empréstimos</h2>
 
         <div class="row g-4">
             <!-- Card 1 -->
@@ -151,14 +151,14 @@
                         <p class="card-text">Empréstimos em atividade.</p>
                         <a class="btn btn-outline-light btn-sm"
                            asp-controller="Loan"
-                           asp-action="Index">
+                           asp-action="ManageLoans">
                             Mais informações
                         </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Card 3 (exemplo adicional) -->
+            <!-- Card 3  -->
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card text-white bg-danger h-100 shadow">
                     <div class="card-header">Empréstimos atrasados</div>
