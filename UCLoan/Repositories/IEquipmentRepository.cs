@@ -7,6 +7,7 @@ namespace UCLoan.Repositories
     {
         Task<List<Equipment>> GetAllEquipmentAsync(CancellationToken ct = default);
         Task<Equipment?> GetByIdAsync(int id, CancellationToken ct = default);
+        Task<Equipment?> GetByEquipmentIdAsync(int equipmentId, CancellationToken ct = default);
         Task<EquipmentModel?> GetModelOfEquipment(Equipment equipment, CancellationToken ct = default);
         Task AddAsync(Equipment equipment, CancellationToken ct = default);
         Task UpdateAsync(Equipment equipment, CancellationToken ct = default);
