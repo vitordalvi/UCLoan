@@ -1,0 +1,55 @@
+﻿@using UCLoan.ViewModels.Home
+@model QueueViewModel
+
+@{
+    ViewData["Title"] = "Pedir Equipamento";
+
+    if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">@ViewData["Title"]</h3>
+
+                    <form asp-controller="Home"
+                          asp-action="Queue"
+                          method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="UserEmail" class="form-control" placeholder="O equipamento será emprestado para esse e-mail" disabled/>
+                            <label asp-for="UserEmail">E-mail</label>
+                            <span asp-validation-for="UserEmail" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="EndDate" class="form-control" type="date" placeholder="Insira a data de devolução" />
+                            <label asp-for="EndDate">Devolução *</label>
+                            <span asp-validation-for="EndDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3 justify-content-center">
+                            <input asp-for="Description" class="form-control" placeholder="Insira a necessidade do empréstimo" style="height: 110px" />
+                            <label asp-for="Description" class="mt-4">Motivo do Empréstimo</label>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="w-100 btn btn-lg btn-primary">Salvar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
