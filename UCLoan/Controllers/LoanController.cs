@@ -7,6 +7,8 @@ using UCLoan.Extensions;
 using UCLoan.Services;
 using UCLoan.ViewModels.Loan;
 using System.Linq;
+using UCLoan.ViewModels.Home;
+using System.Text.Json;
 
 namespace UCLoan.Controllers
 {
@@ -16,11 +18,13 @@ namespace UCLoan.Controllers
         private readonly LoanService _loanService;
         private readonly AdminService _adminService;
         private readonly EquipmentService _equipmentService;
+        private readonly HomeService _homeService;
 
-        public LoanController(LoanService loanService, AdminService adminService, EquipmentService equipmentService) {
+        public LoanController(LoanService loanService, AdminService adminService, EquipmentService equipmentService, HomeService homeService) {
             _loanService = loanService;
             _adminService = adminService;
             _equipmentService = equipmentService;
+            _homeService = homeService;
         }
 
         // <-------------- EMPRÉSTIMOS (GET) -------------->
@@ -76,6 +80,38 @@ namespace UCLoan.Controllers
             };
 
             await LoadDropdownsAsync();
+            return View(viewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TakeOutRequest(int id)
+        {
+            if (id <= 0)
+            {
+                TempData["Error"] = "Id inválido.";
+                return RedirectToAction("Admin", "ManageQueue");
+            }
+
+            var queue = await _homeService.GetQueueByIdAsync(id);
+
+            if (queue == null)
+            {
+                TempData["Error"] = "Solicitação não encontrada.";
+                return RedirectToAction("Admin", "ManageQueue");
+            }
+
+            await LoadDropdownsAsync();
+
+            var viewModel = new TakeOutRequestViewModel
+            {
+                QueueId = queue.Id,
+                User = queue.User,
+                UserEmail = queue.User?.Email ?? string.Empty,
+                RequestedAt = queue.CreatedAt,
+                EndDate = queue.ReturnDate ?? DateTime.Today.AddDays(7),
+                Description = queue.Description
+            };
+
             return View(viewModel);
         }
 
@@ -200,9 +236,49 @@ namespace UCLoan.Controllers
             return RedirectToAction(nameof(ManageLoans));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TakeOutRequest([Bind("QueueId,UserEmail,EquipmentId,RequestedAt,EndDate,Description")] TakeOutRequestViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "Algo não está valido.";
+                ModelState.AddModelError(string.Empty, "Dados inválidos. Verifique os campos.");
+                await LoadDropdownsAsync();
+                return View(model);
+            }
+
+            var email = model.UserEmail?.Trim();
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                ModelState.AddModelError(nameof(model.UserEmail), "O e-mail do recebedor é obrigatório.");
+                await LoadDropdownsAsync();
+                return View(model);
+            }
+
+            var requestedAt = model.RequestedAt == default ? DateTime.Now : model.RequestedAt;
+
+            var (success, error) = await _loanService.CreateAsync(
+                email,
+                model.EquipmentId,
+                requestedAt,
+                model.EndDate,
+                model.Description);
+
+            if (!success)
+            {
+                TempData["Error"] = error;
+                await LoadDropdownsAsync();
+                return View(model);
+            }
+
+            TempData["Success"] = "Empréstimo realizado com sucesso!";
+            return RedirectToAction("ManageQueue", "Admin");
+        }
+
         // <-------------- LOANS (UTILS) -------------->
 
-        // Carrega as listas suspensas necessárias (exceto equipamentos se sobrescrever for false)
+        // Carrega as listas suspensas
         private async Task LoadDropdownsAsync()
         {
             ViewBag.AllAvailableEquipments = await _loanService.GetAllEquipmentsAvailableSelectListAsync();
