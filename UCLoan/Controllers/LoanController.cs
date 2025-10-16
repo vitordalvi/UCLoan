@@ -43,12 +43,8 @@ namespace UCLoan.Controllers
         [HttpGet]
         public async Task<IActionResult> AddLoan()
         {
-            var viewModel = new AddLoanViewModel
-            {
-                AvailableEquipments = await _loanService.GetAllEquipmentsAvailableSelectListAsync()
-            };
-
-            return View(viewModel);
+            await LoadDropdownsAsync();
+            return View();
         }
 
         [HttpGet]
@@ -88,17 +84,19 @@ namespace UCLoan.Controllers
         // Adicionar Empréstimo 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddLoan([Bind("UserEmail,EquipmentId,SelectedEquipmentId,AvailableEquipments,StartDate,EndDate,Description")] AddLoanViewModel model)
+        public async Task<IActionResult> AddLoan([Bind("UserEmail,EquipmentId,StartDate,EndDate,Description")] AddLoanViewModel model)
         {
             if (!ModelState.IsValid)
             {
+                await LoadDropdownsAsync();
                 return View(model);
             }
 
             if (!model.EndDate.HasValue)
             {
                 ModelState.AddModelError("EndDate", "A data de devolução é obrigatória.");
-                model.AvailableEquipments = await _loanService.GetAllEquipmentsAvailableSelectListAsync();
+
+                await LoadDropdownsAsync();
                 return View(model);
             }
 
@@ -151,6 +149,30 @@ namespace UCLoan.Controllers
             }
 
             TempData["Success"] = "Empréstimo atualizado com sucesso.";
+            return RedirectToAction(nameof(ManageLoans));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmReceipt(int id)
+        {
+            if (id <= 0)
+            {
+                TempData["Error"] = "Id inválido.";
+                return RedirectToAction(nameof(ManageLoans));
+            }
+
+            var (success, error) = await _loanService.ConfirmReceiptAsync(id);
+
+            if (!success)
+            {
+                TempData["Error"] = error;
+            }
+            else
+            {
+                TempData["Success"] = "Recebimento confirmado com sucesso.";
+            }
+
             return RedirectToAction(nameof(ManageLoans));
         }
 
