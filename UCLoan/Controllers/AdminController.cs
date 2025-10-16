@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using UCLoan.Constants;
+using UCLoan.Extensions;
 using UCLoan.Models;
 using UCLoan.Repositories;
 using UCLoan.Services;
@@ -14,12 +16,14 @@ namespace UCLoan.Controllers
         private readonly AdminService _adminService;
         private readonly EquipmentService _equipmentService;
         private readonly LoanService _loanService;
+        private readonly HomeService _homeService;
 
-        public AdminController(AdminService adminService, EquipmentService equipmentService, LoanService loanService)
+        public AdminController(AdminService adminService, EquipmentService equipmentService, LoanService loanService, HomeService homeService)
         {
             _adminService = adminService;
             _equipmentService = equipmentService;
             _loanService = loanService;
+            _homeService = homeService;
         }
 
         // <-------------- INDEX (GET) -------------->
@@ -58,6 +62,20 @@ namespace UCLoan.Controllers
             return View(viewModel);
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> ManageQueue()
+        {
+            var queues = await _homeService.GetAllQueuesAsync();
+
+            // Gera display names para os enums
+            ViewBag.LoanStatusDisplay = EnumExtensions.GetDisplayNames<EquipmentConstants.EquipmentLoanStatus>();
+            ViewBag.PhysicalStatusDisplay = EnumExtensions.GetDisplayNames<EquipmentConstants.EquipmentPhysicalStatus>();
+
+            return View(queues);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Users()
         {
             var users = await _adminService.GetUsersAsync();
