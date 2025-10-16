@@ -42,11 +42,19 @@ namespace UCLoan.Controllers
         [HttpGet]
         public async Task<IActionResult> EditEquipment(int id)
         {
-            if (id <= 0) return NotFound();
+            if (id <= 0)
+            {
+                TempData["Error"] = "Id inválido.";
+                return RedirectToAction(nameof(ManageEquipment));
+            }
 
             var equipment = await _equipmentService.GetByIdAsync(id);
 
-            if (equipment == null) return NotFound();
+            if (equipment == null)
+            {
+                TempData["Error"] = "Equipamento não encontrado";
+                return RedirectToAction(nameof(ManageEquipment));
+            }
 
             await LoadDropdownsAsync();
             return View(equipment);
