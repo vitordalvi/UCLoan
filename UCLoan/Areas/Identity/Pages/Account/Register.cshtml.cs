@@ -77,17 +77,20 @@ namespace UCLoan.Areas.Identity.Pages.Account
             /// </summary>
             [Required]
             [EmailAddress]
-            [Display(Name = "Email")]
+            [Display(Name = "E-mail")]
             public string Email { get; set; }
 
-            [Required (ErrorMessage = "O nome completo é um campo obrigatório.")]
+            [Required(ErrorMessage = "O nome completo é um campo obrigatório.")]
             [Display(Name = "Nome Completo")]
-            [RegularExpression(@"^[a-zA-Z\'\'-\'\s]{1,100}$", ErrorMessage = "Números e caracteres especiais não são permitidos no nome.")]
+            [RegularExpression(@"^([\p{L}\p{M}]+(?:[\s'-][\p{L}\p{M}]+)+)$", ErrorMessage = "Informe nome e sobrenome, usando apenas letras, espaços, apóstrofos ou hífens.")]
             [StringLength(80, ErrorMessage = "O nome completo não pode exceder 80 caracteres.")]
             public string FullName { get; set; }
 
+
+
             [Required (ErrorMessage = "O CPF é um campo obrigatório.")]
             [Display(Name = "CPF")]
+            [RegularExpression(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$", ErrorMessage = "CPF inválido.")]
             public string CPF { get; set; }
 
             [Required]
