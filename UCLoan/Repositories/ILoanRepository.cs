@@ -10,7 +10,6 @@ namespace UCLoan.Repositories
         Task<Loan?> GetByIdAsync(int id, CancellationToken ct = default);
         Task<List<Loan>> GetUserLoansByEmailAsync(string userEmail, CancellationToken ct = default);
         Task<List<Equipment>> GetUserLoansEquipmentByEmailAsync(string userEmail, CancellationToken ct = default);
-
         Task AddAsync(Loan loan, CancellationToken ct = default);
         Task UpdateAsync(Loan loan, CancellationToken ct = default);
         Task DeleteAsync(Loan loan, CancellationToken ct = default);
