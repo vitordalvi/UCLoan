@@ -5,8 +5,6 @@
     ViewData["Title"] = "Adicionar Empréstimo";
 
     var allAvailableEquipments = (IEnumerable<SelectListItem>)ViewBag.AllAvailableEquipments;
-    var allEquipmentModels = (IEnumerable<SelectListItem>)ViewBag.AllEquipmentModels;
-    var allLoanStatus = (IEnumerable<SelectListItem>)ViewBag.AllLoanStatus;
     var allPhysicalStatus = (IEnumerable<SelectListItem>)ViewBag.AllPhysicalStatus;
 
     if (TempData["Error"] != null)
@@ -43,9 +41,9 @@
                         <div class="mb-3">
                             <label class="form-label">Equipamento *</label>
                             <select asp-for="EquipmentId"
-                                    asp-items="@Model.AvailableEquipments"
+                                    asp-items="allAvailableEquipments"
                                     class="form-select">
-                                <option value="Selecione o equipamento">Selecione o equipamento</option>
+                                <option value="">Selecione o equipamento</option>
                             </select>
                             <span asp-validation-for="EquipmentId" class="text-danger"></span>
                         </div>
