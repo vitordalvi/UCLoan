@@ -69,18 +69,6 @@ namespace UCLoan.Services
             return Task.FromResult(list);
         }
 
-        public async Task<List<Equipment>> GetAllMaintanceEquipments()
-        {
-            var equipments = await _equipmentRepository.GetAllEquipmentAsync();
-
-            var maintanceEquipments = equipments
-                .Where(e => e.PhysicalStatus == EquipmentConstants.EquipmentPhysicalStatus.Broken)
-                .ToList();
-
-            return maintanceEquipments;
-        }
-            
-
         public Task GetEquipmentsAvailableSelectListAsync()
         {
             var list = Enum.GetValues(typeof(EquipmentConstants.EquipmentLoanStatus))
@@ -95,8 +83,22 @@ namespace UCLoan.Services
             return Task.FromResult(list);
         }
 
+        public async Task<List<Equipment>> GetAllMaintanceEquipments()
+        {
+            var equipments = await _equipmentRepository.GetAllEquipmentAsync();
+
+            var maintanceEquipments = equipments
+                .Where(e => e.PhysicalStatus == EquipmentConstants.EquipmentPhysicalStatus.Broken)
+                .ToList();
+
+            return maintanceEquipments;
+        }
+         
         public Task<Equipment?> GetByIdAsync(int id, CancellationToken ct = default) =>
             _equipmentRepository.GetByIdAsync(id, ct);
+
+        public Task<Equipment?> GetByEquipmentIdAsync(int equipmentId, CancellationToken ct = default) =>
+            _equipmentRepository.GetByEquipmentIdAsync(equipmentId, ct);
 
         public async Task<(bool Success, string? Error)> CreateAsync(
             int equipmentModelId,
@@ -182,19 +184,40 @@ namespace UCLoan.Services
             EquipmentConstants.EquipmentLoanStatus newStatus,
             CancellationToken ct = default)
         {
-            var entity = await _equipmentRepository.GetByIdAsync(id, ct);
-            if (entity == null)
+            var equipment = await _equipmentRepository.GetByIdAsync(id, ct);
+            if (equipment == null)
                 return (false, "Equipamento não encontrado.");
 
-            // Não voltar de Returned para emprestado direto
-            if (entity.LoanStatus == EquipmentConstants.EquipmentLoanStatus.Returned &&
-                newStatus == EquipmentConstants.EquipmentLoanStatus.Borrowed)
-            {
-                return (false, "Transição de 'Devolvido' para 'Emprestado' não permitida.");
-            }
 
-            entity.LoanStatus = newStatus;
-            await _equipmentRepository.UpdateAsync(entity, ct);
+            // Implementar só se tiver tempo de fazer o botão de "Confirmar entrega" se o equipamento estiver atrasado
+
+            // Não voltar de Returned para emprestado direto
+            //if (equipment.LoanStatus == EquipmentConstants.EquipmentLoanStatus.Returned &&
+            //    newStatus == EquipmentConstants.EquipmentLoanStatus.Borrowed)
+            //{
+            //    return (false, "O equipamento 'Devolvido' não pode ser emprestado.");
+            //}
+
+            //if (equipment.LoanStatus == EquipmentConstants.EquipmentLoanStatus.Unavailable &&
+            //    newStatus == EquipmentConstants.EquipmentLoanStatus.Borrowed)
+            //{
+            //    return (false, "O equipamento 'Indisponível' não pode ser emprestado.");
+            //}
+
+            //if (equipment.LoanStatus == EquipmentConstants.EquipmentLoanStatus.Borrowed &&
+            //    newStatus == EquipmentConstants.EquipmentLoanStatus.Available)
+            //{
+            //    return (false, "O equipamento 'Emprestado' não pode ser marcado como 'Disponível'.");
+            //}
+
+            //if (equipment.LoanStatus == EquipmentConstants.EquipmentLoanStatus.Overdue &&
+            //    newStatus == EquipmentConstants.EquipmentLoanStatus.Available)
+            //{
+            //    return (false, "O equipamento 'Atrasado' não pode ser marcado como 'Disponível'.");
+            //}
+
+            equipment.LoanStatus = newStatus;
+            await _equipmentRepository.UpdateAsync(equipment, ct);
             var saved = await _equipmentRepository.SaveChangesAsync(ct);
             return saved ? (true, null) : (false, "Falha ao atualizar status de empréstimo do equipamento.");
         }
@@ -204,12 +227,12 @@ namespace UCLoan.Services
             EquipmentConstants.EquipmentPhysicalStatus newStatus,
             CancellationToken ct = default)
         {
-            var entity = await _equipmentRepository.GetByIdAsync(id, ct);
-            if (entity == null)
+            var equipment = await _equipmentRepository.GetByIdAsync(id, ct);
+            if (equipment == null)
                 return (false, "Equipamento não encontrado.");
 
-            entity.PhysicalStatus = newStatus;
-            await _equipmentRepository.UpdateAsync(entity, ct);
+            equipment.PhysicalStatus = newStatus;
+            await _equipmentRepository.UpdateAsync(equipment, ct);
             var saved = await _equipmentRepository.SaveChangesAsync(ct);
             return saved ? (true, null) : (false, "Falha ao atualizar estado físico do equipamento.");
         }
