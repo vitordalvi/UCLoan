@@ -31,6 +31,21 @@ namespace UCLoan.Repositories
                 .FirstOrDefaultAsync(ct);
         }
 
+        public async Task<List<Loan>> GetUserLoansByEmailAsync(string userEmail, CancellationToken ct = default) =>
+             await _context.Set<Loan>()
+                .Where(l => l.User.Email == userEmail)
+                .Include(l => l.Equipment)
+                    .ThenInclude(e => e.EquipmentModel)
+                .ToListAsync(ct);
+
+        public async Task<List<Equipment>> GetUserLoansEquipmentByEmailAsync(string userEmail, CancellationToken ct = default) =>
+            await _context.Set<Loan>()
+                .Where(l => l.User.Email == userEmail)
+                .Include(l => l.Equipment)
+                    .ThenInclude(e => e.EquipmentModel)
+                .Select(l => l.Equipment)
+                .ToListAsync(ct);
+
         public Task<Loan?> GetByIdAsync(int id, CancellationToken ct = default) =>
             _context.Set<Loan>()
                 .Include(l => l.Equipment)
