@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Gerenciar Empréstimos";
+    var showAllLoanStatus = ViewBag.LoanStatusDisplay;
 }
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.css" />
@@ -35,7 +36,8 @@
             <tr>
                 <th>ID do Empréstimo</th>
                 <th>Usuário</th>
-                <th>Modelo</th>
+                <th>Equipamento</th>
+                <th>Situação</th>
                 <th>Início</th>
                 <th>Devolução</th>
                 <th>Descrição</th>
@@ -52,11 +54,12 @@
                         <td>@(loan.User?.Email ?? "Usuário não encontrado")</td>
                         <td>
                             @(
-                                loan.Equipment?.EquipmentModel != null
-                                    ? $"{loan.Equipment.EquipmentModel.Manufacturer} {loan.Equipment.EquipmentModel.Name}"
+                                loan.Equipment?.EquipmentId != null
+                                    ? $"{loan.Equipment.EquipmentId} - {loan.Equipment.EquipmentModel.Manufacturer} {loan.Equipment.EquipmentModel.Name}"
                                     : "Modelo não encontrado"
                             )
                         </td>
+                        <td>@ViewBag.LoanStatusDisplay[(int)loan.LoanStatus]</td>
                         <td>@loan.StartDate.ToString("dd/MM/yyyy")</td>
                         <td>@(loan.EndDate.HasValue ? loan.EndDate.Value.ToString("dd/MM/yyyy") : "Não informado")</td>
                         <td>@loan.Description</td>
