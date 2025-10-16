@@ -1,0 +1,88 @@
+﻿@using UCLoan.ViewModels.Loan
+@model EditLoanViewModel
+
+@{
+    ViewData["Title"] = "Editar Empréstimo";
+
+    var allAvailableEquipments = (IEnumerable<SelectListItem>)ViewBag.AllAvailableEquipments;
+    var allLoanStatus = (IEnumerable<SelectListItem>)ViewBag.AllLoanStatus;
+    var allPhysicalStatus = (IEnumerable<SelectListItem>)ViewBag.AllPhysicalStatus;
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">@ViewData["Title"]</h3>
+
+                    <form asp-controller="Loan"
+                          asp-action="EditLoan"
+                          method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Equipamento</label>
+                            <select asp-for="EquipmentId"
+                                    asp-items="allAvailableEquipments"
+                                    class="form-select">
+                                <option value="@Model.EquipmentId">Atual: @Model.EquipmentId</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Situação</label>
+                            <select asp-for="LoanStatus"
+                                    asp-items="allLoanStatus"
+                                    class="form-select">
+                                <option value="Selecione a situação de empréstimo">Selecione a situação de empréstimo</option>
+                            </select>
+                            <span asp-validation-for="LoanStatus" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Estado físico</label>
+                            <select asp-for="PhysicalStatus"
+                                    asp-items="allPhysicalStatus"
+                                    class="form-select">
+                                <option value="Selecione o estado físico">Selecione o estado físico</option>
+                            </select>
+                            <span asp-validation-for="PhysicalStatus" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="StartDate" class="form-control" type="date" placeholder="Altere a data de início do empréstimo" />
+                            <label asp-for="StartDate">Início do Empréstimo *</label>
+                            <span asp-validation-for="StartDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="EndDate" class="form-control" type="date" placeholder="Altere a data final do empréstimo" />
+                            <label asp-for="EndDate">Final do Empréstimo*</label>
+                            <span asp-validation-for="EndDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Description" class="form-control" placeholder="Descrição" />
+                            <label asp-for="Description">Descrição</label>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="w-100 btn btn-lg btn-primary">Salvar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
