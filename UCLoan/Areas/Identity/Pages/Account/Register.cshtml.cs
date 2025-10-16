@@ -82,7 +82,8 @@ namespace UCLoan.Areas.Identity.Pages.Account
 
             [Required(ErrorMessage = "O nome completo é um campo obrigatório.")]
             [Display(Name = "Nome Completo")]
-            [RegularExpression(@"^([\p{L}\p{M}]+(?:[\s'-][\p{L}\p{M}]+)+)$", ErrorMessage = "Informe nome e sobrenome, usando apenas letras, espaços, apóstrofos ou hífens.")]
+            [RegularExpression(@"^[A-Za-zÀ-úa-üÁ-ÜçÇ\s'\-]{2,100}$",
+            ErrorMessage = "Use apenas letras, espaços, apóstrofos e hífens.")]
             [StringLength(80, ErrorMessage = "O nome completo não pode exceder 80 caracteres.")]
             public string FullName { get; set; }
 
@@ -90,7 +91,7 @@ namespace UCLoan.Areas.Identity.Pages.Account
 
             [Required (ErrorMessage = "O CPF é um campo obrigatório.")]
             [Display(Name = "CPF")]
-            [RegularExpression(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$", ErrorMessage = "CPF inválido.")]
+            [RegularExpression(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$", ErrorMessage = "CPF inválido, utilize: XXX.XXX.XXX-XX")]
             public string CPF { get; set; }
 
             [Required]
