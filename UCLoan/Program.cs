@@ -57,11 +57,13 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<EquipmentService>();
 builder.Services.AddScoped<LoanService>();
+builder.Services.AddScoped<HomeService>();
 
 // Injecao de dependência dos repositórios
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
 builder.Services.AddScoped<ILoanRepository, LoanRepository>();
+builder.Services.AddScoped<IHomeRepository, HomeRepository>();
 
 
 var app = builder.Build();

@@ -1,9 +1,9 @@
 ﻿@{
-    if (this.User.IsInRole("Admin"))
+    if (this.User.IsInRole("Admin") && this.User.Identity.IsAuthenticated)
     {
         Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
     } 
-    else
+    else if (this.User.Identity.IsAuthenticated)
     {
         Layout = "~/Views/Shared/_Layout.cshtml";
     }
