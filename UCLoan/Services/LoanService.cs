@@ -19,8 +19,17 @@ namespace UCLoan.Services
             _adminService = adminService;
         }
 
-        public Task<List<Models.Loan>> GetAllLoansAsync(CancellationToken ct = default) =>
+        public Task<List<Loan>> GetAllLoansAsync(CancellationToken ct = default) =>
             _loanRepository.GetAllLoansAsync(ct);
+
+        public Task<List<Loan>> GetUserLoansByEmailAsync(string userEmail, CancellationToken ct = default) =>
+            _loanRepository.GetUserLoansByEmailAsync(userEmail, ct);
+
+        public async Task<List<Equipment>> GetUserLoansEquipmentByEmailAsync(string userEmail, CancellationToken ct = default)
+        {
+            var equipments = await _loanRepository.GetUserLoansEquipmentByEmailAsync(userEmail, ct);
+            return equipments.Where(e => e != null).ToList()!;
+        }
 
         public Task<Models.Loan?> GetByIdAsync(int id, CancellationToken ct = default) => 
             _loanRepository.GetByIdAsync(id, ct);
@@ -106,6 +115,31 @@ namespace UCLoan.Services
             return saved ? (true, "Empréstimo atualizado com sucesso.") : (false, "Erro ao atualizar o empréstimo.");
         }
 
+        public async Task<(bool Success, string? Error)> ConfirmReceiptAsync(int id, CancellationToken ct = default)
+        {
+            var loan = await _loanRepository.GetByIdAsync(id, ct);
+
+            if (loan == null)
+            {
+                return (false, "Empréstimo não encontrado.");
+            }
+            var equipment = loan.Equipment;
+
+            if (equipment == null)
+            {
+                return (false, "Equipamento associado ao empréstimo não encontrado.");
+            }
+
+            loan.Equipment = null!;
+            equipment.LoanStatus = EquipmentConstants.EquipmentLoanStatus.Returned;
+            loan.EndDate = DateTime.UtcNow;
+
+            await _loanRepository.UpdateAsync(loan, ct);
+            var saved = await _loanRepository.SaveChangesAsync(ct);
+
+            return saved ? (true, null) : (false, "Erro ao confirmar o recebimento do equipamento.");
+        }
+
         public async Task<(bool Success, string Error)> DeleteAsync(int id, CancellationToken ct = default)
         {
             var blockedStatus = new[]
@@ -185,7 +219,6 @@ namespace UCLoan.Services
             {
                 EquipmentConstants.EquipmentLoanStatus.Borrowed,
                 EquipmentConstants.EquipmentLoanStatus.Overdue,
-                EquipmentConstants.EquipmentLoanStatus.Returned
             };
 
             var loanedEquipments = equipments
@@ -217,9 +250,11 @@ namespace UCLoan.Services
                 EquipmentConstants.EquipmentLoanStatus.Available,
                 EquipmentConstants.EquipmentLoanStatus.Unavailable
             };
+
             var loanedEquipmentsStatus = equipments
                 .Where(e => statusList.Contains(e.LoanStatus))
                 .ToList();
+
             return loanedEquipmentsStatus;
         }
 
