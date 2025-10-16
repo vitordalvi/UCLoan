@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Numerics;
-using UCLoan.Models;
-using UCLoan.Services;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace UCLoan.ViewModels.Admin
 {
@@ -26,7 +22,7 @@ namespace UCLoan.ViewModels.Admin
 
         // Cards equipamentos
         [Display(Name = "Total de Equipamentos")]
-        public int AllEquipments { get; set;  } = 0;
+        public int AllEquipments { get; set;  } 
         [Display(Name = "Equipamentos emprestados")]
         public int LoanedEquipments { get; set; }
         [Display(Name = "Equipamentos em manutenção")]

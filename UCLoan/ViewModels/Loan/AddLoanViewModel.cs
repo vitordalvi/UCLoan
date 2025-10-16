@@ -12,8 +12,6 @@ namespace UCLoan.ViewModels.Loan
         public string UserEmail { get; set; } = string.Empty;
         [Required(ErrorMessage = "O equipamento escolhido é obrigatório")]
         public int EquipmentId { get; set; }
-        public int SelectedEquipmentId { get; set; }
-        public List<SelectListItem> AvailableEquipments { get; set; } = new List<SelectListItem>();
         public DateTime StartDate { get; set; }
         [Required(ErrorMessage = "A data de devolução é obrigatória.")]
         public DateTime? EndDate { get; set; }
