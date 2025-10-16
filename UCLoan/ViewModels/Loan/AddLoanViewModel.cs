@@ -14,9 +14,9 @@ namespace UCLoan.ViewModels.Loan
         public int EquipmentId { get; set; }
         public int SelectedEquipmentId { get; set; }
         public List<SelectListItem> AvailableEquipments { get; set; } = new List<SelectListItem>();
-        public DateTime LoanDate { get; set; }
+        public DateTime StartDate { get; set; }
         [Required(ErrorMessage = "A data de devolução é obrigatória.")]
-        public DateTime? ReturnDate { get; set; }
+        public DateTime? EndDate { get; set; }
         [StringLength(80, ErrorMessage = "A sua descrição deve conter um máximo de 80 caracteres.")]
         public string Description { get; set; } = string.Empty;
 
