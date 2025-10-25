@@ -12,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -35,10 +37,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Injeção de dependência dos repositórios e interfaces
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<ILogRepository, LogRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Injeção de dependência dos serviços
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<LogService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<AdminService>();
 
 var app = builder.Build();
 
