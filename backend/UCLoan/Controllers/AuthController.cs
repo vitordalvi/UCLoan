@@ -25,7 +25,7 @@ namespace UCLoan.Controllers
             if (!success)
                 return BadRequest(message);
 
-            return Ok(message);
+            return Ok(new { success, message });
         }
 
         // Endpoint de login
@@ -37,7 +37,7 @@ namespace UCLoan.Controllers
             if (!success)
                 return BadRequest(message);
 
-            return Ok(token);
+            return Ok(new { success, message, token });
         }
 
         // Endpoint para dar refresh no token
