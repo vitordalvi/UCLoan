@@ -19,21 +19,21 @@ namespace UCLoan.Repository
         }
 
         // Obtém um usuário pelo seu ID
-        public async Task<User?> GetUserByIdAsync(Guid userId)
+        public async Task<User?> GetByIdAsync(Guid userId)
         {
             return await _context.Users
                 .FindAsync(userId);
         }
 
         // Obtém um usuário pelo seu email
-        public async Task<User?> GetUserByEmailAsync(string email)
+        public async Task<User?> GetByEmailAsync(string email)
         {
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
 
         // Obtem um usuário pelo seu CPF
-        public async Task<User?> GetUserByCpfAsync(string CPF)
+        public async Task<User?> GetByCpfAsync(string CPF)
         {
             return await _context.Users
                 .FirstOrDefaultAsync(c => c.CPF == CPF);
