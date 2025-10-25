@@ -6,5 +6,6 @@ namespace UCLoan.Repository
     {
         Task AddUserAsync(User user);
         Task<User> GetUserByEmailAsync(string email);
+        Task<bool> SaveChangesAsync();
     }
 }

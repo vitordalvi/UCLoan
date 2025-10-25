@@ -22,5 +22,8 @@ namespace UCLoan.Repository
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
+
+        public async Task<bool> SaveChangesAsync() =>
+            await _context.SaveChangesAsync() > 0;
     }
 }
