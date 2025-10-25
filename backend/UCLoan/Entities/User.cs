@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using UCLoan.Constants;
 
 namespace UCLoan.Entities
 {
@@ -10,7 +11,7 @@ namespace UCLoan.Entities
         public string CPF { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
-        public string Role { get; set; } = string.Empty;
+        public Role Role { get; set; } = Role.User;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public Guid? LastLoanId { get; set; }
