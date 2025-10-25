@@ -22,26 +22,26 @@ namespace UCLoan.Services
 
         // Obter usuário por email
         public Task<User?> GetUserByEmailAsync(string email) =>
-            _authRepository.GetUserByEmailAsync(email);
+            _authRepository.GetByEmailAsync(email);
 
         // Obter usuário por Id
         public Task<User?> GetUserByIdAsync(Guid userId) =>
-            _authRepository.GetUserByIdAsync(userId);
+            _authRepository.GetByIdAsync(userId);
         
         // Obter usuário por CPF
         public Task<User?> GetUserByCpfAsync(string CPF) =>
-            _authRepository.GetUserByCpfAsync(CPF);
+            _authRepository.GetByCpfAsync(CPF);
 
 
         // Criar o usuário
         public async Task<(bool Success, string Message)> RegisterAsync(UserRegisterDTO request)
         {
-            if (await _authRepository.GetUserByEmailAsync(request.Email) != null)
+            if (await _authRepository.GetByEmailAsync(request.Email) != null)
             {
                 return (false, "O e-mail já está em uso.");
             }
 
-            if (await _authRepository.GetUserByCpfAsync(request.CPF) != null)
+            if (await _authRepository.GetByCpfAsync(request.CPF) != null)
             {
                 return (false, "O CPF já está em uso.");
             }
@@ -75,7 +75,7 @@ namespace UCLoan.Services
         // Login do usuário
         public async Task<(bool Success, string Message, TokenResponseDTO? Token)> LoginAsync(UserLoginDTO request)
         {
-            var user = await _authRepository.GetUserByEmailAsync(request.Email.ToLower());
+            var user = await _authRepository.GetByEmailAsync(request.Email.ToLower());
 
             if (user == null)
                 return (false, "O usuário não foi encontrado", null);
@@ -122,7 +122,7 @@ namespace UCLoan.Services
         // Faz a validação do Refresh Token
         private async Task<(bool Success, string Message, User? user)> ValidateRefreshTokenAsync(Guid userId, string refreshToken)
         {
-            var user = await _authRepository.GetUserByIdAsync(userId);
+            var user = await _authRepository.GetByIdAsync(userId);
 
             if (user == null || user.RefreshToken != refreshToken ||
                 user.RefreshTokenExpiryTime <= DateTime.UtcNow)
