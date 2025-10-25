@@ -4,10 +4,13 @@ using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using System.Text;
 using UCLoan.Data;
+using UCLoan.Repository;
+using UCLoan.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -29,10 +32,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+// Injeção de dependência dos repositórios e interfaces
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<ILogRepository, LogRepository>();
+
+// Injeção de dependência dos serviços
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<LogService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    app.MapOpenApi();
     app.MapScalarApiReference();
 }
 
