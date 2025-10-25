@@ -54,7 +54,7 @@ namespace UCLoan.Data
                 .HasColumnType("nvarchar(max)")
                 .IsRequired(false);
 
-                entity.HasIndex(e => new { e.UserId, e.OccurredAt }).IsUnique();
+                entity.HasIndex(e => new { e.UserId, e.OccurredAt });
             });
 
             // Usuário
@@ -74,12 +74,12 @@ namespace UCLoan.Data
                       .IsRequired()
                       .HasMaxLength(100);
 
+                entity.Property(u => u.Role)
+                    .HasConversion<string>()
+                    .IsRequired();
+
                 entity.Property(u => u.PasswordHash)
                       .IsRequired();
-
-                entity.Property(u => u.Role)
-                      .IsRequired()
-                      .HasMaxLength(50);
 
                 entity.Property(u => u.CreatedAt)
                       .IsRequired();
