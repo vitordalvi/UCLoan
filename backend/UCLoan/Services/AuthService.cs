@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -49,11 +48,8 @@ namespace UCLoan.Services
 
             var user = new User();
 
-            var hashedPassword = new PasswordHasher<User>()
-                .HashPassword(user, request.Password);
-
             user.Email = request.Email;
-            user.PasswordHash = hashedPassword;
+            user.PasswordHash = HashPassword(user, request.Password);
             user.Name = request.Name;
             user.CPF = request.CPF;
             user.CreatedAt = DateTime.UtcNow;
@@ -84,11 +80,8 @@ namespace UCLoan.Services
             if (user == null)
                 return (false, "O usuário não foi encontrado", null);
 
-            var verifyHashedPassword = new PasswordHasher<User>()
-                .VerifyHashedPassword(user, user.PasswordHash, request.Password);
-
-            if (verifyHashedPassword == PasswordVerificationResult.Failed)
-                return (false, "Senha incorreta", null);
+            if (!VerifyPassword(user, request.Password))
+                return (false, "Senha incorreta.", null);
 
             var tokenResult = await CreateTokenResponse(user);
 
@@ -101,21 +94,6 @@ namespace UCLoan.Services
                 new { user.Email, user.Name });
 
             return (tokenResult.Success, "Autenticação efetuada.", tokenResult.Token);
-        }
-
-        // Cria o Token de Acesso e Refresh Token
-        private async Task<(bool Success, string Message, TokenResponseDTO Token)> CreateTokenResponse(User user)
-        {
-            var (success, message, token) = await GenerateAndSaveRefreshTokenAsync(user);
-
-            var tokenResponse = new TokenResponseDTO
-            {
-                AccessToken = CreateToken(user),
-                RefreshToken = token
-            };
-
-            // Sempre retorna sucesso, pois a validação já foi feita antes
-            return (true, string.Empty, tokenResponse);
         }
 
         // Atualiza os tokens (Access Token e Refresh Token)
@@ -155,17 +133,6 @@ namespace UCLoan.Services
             return (true, string.Empty, user);
         }
 
-        // Gera o Refresh Token
-        private string GenerateRefreshToken()
-        {
-            var randomNumber = new byte[32];
-            using var rng = RandomNumberGenerator.Create();
-            rng.GetBytes(randomNumber);
-
-            // Converte o array de bytes para uma string Base64
-            return Convert.ToBase64String(randomNumber);
-        }
-
         // Gera e salva o Refresh Token no banco de dados
         private async Task<(bool Success, string Error, string token)> GenerateAndSaveRefreshTokenAsync(User user)
         {
@@ -176,6 +143,48 @@ namespace UCLoan.Services
             var saved = await _authRepository.SaveChangesAsync();
 
             return saved ? (true, "Refresh Token gerado e salvo com sucesso.", refreshToken) : (false, "Houve um erro ao gerar ou salvar os tokens", string.Empty);
+        }
+
+        // Cria o Token de Acesso e Refresh Token
+        private async Task<(bool Success, string Message, TokenResponseDTO Token)> CreateTokenResponse(User user)
+        {
+            var (success, message, token) = await GenerateAndSaveRefreshTokenAsync(user);
+
+            var tokenResponse = new TokenResponseDTO
+            {
+                AccessToken = CreateToken(user),
+                RefreshToken = token
+            };
+
+            // Sempre retorna sucesso, pois a validação já foi feita antes
+            return (true, string.Empty, tokenResponse);
+        }
+
+        // Cria a senha hash
+        private string HashPassword(User user, string password)
+        {
+            var hasher = new PasswordHasher<User>();
+            return hasher.HashPassword(user, password);
+        }
+
+        // Cria a senha hash
+        private bool VerifyPassword(User user, string password)
+        {
+            var hasher = new PasswordHasher<User>();
+            var result = hasher.VerifyHashedPassword(user, user.PasswordHash, password);
+
+            return result == PasswordVerificationResult.Success;
+        }
+
+        // Gera o Refresh Token
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+
+            // Converte o array de bytes para uma string Base64
+            return Convert.ToBase64String(randomNumber);
         }
 
         // Cria o Token de Acesso JWT
