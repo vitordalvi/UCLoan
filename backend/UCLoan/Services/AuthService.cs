@@ -63,7 +63,7 @@ namespace UCLoan.Services
                 // Log de registro de usuários
                 await _logService.LogAsync(
                     user.Id,
-                    "User Registered",
+                    "Usuário registrado.",
                     $"{user.Email}",
                     user.Id,
                     new { user.Email, user.Name, user.CPF });
