@@ -1,4 +1,5 @@
-﻿using UCLoan.Entities;
+﻿using UCLoan.DTOs.Admin;
+using UCLoan.Entities;
 using UCLoan.Repository;
 
 namespace UCLoan.Services
@@ -18,9 +19,25 @@ namespace UCLoan.Services
         public Task<User?> GetByEmailAsync(string email) =>
             _userRepository.GetByEmailAsync(email);
         // Obtém a lista de todos os usuários
-        public async Task<IList<User>> GetUsersAsync()
+        public async Task<(bool Success, string Message, IList<GetUsersDto> dto)> GetUsersAsync()
         {
-            return await _userRepository.GetUsersAsync();
+            var users = await _userRepository.GetUsersAsync();
+
+            if (users == null || !users.Any())
+            {
+                return (false, "Nenhum usuário encontrado", null!);
+            }
+
+            var usersDto = users.Select(user => new GetUsersDto
+            {
+                Guid = user.Id.ToString(),
+                Name = user.Name,
+                Email = user.Email,
+                Role = user.Role.ToString(),
+                CreatedAt = user.CreatedAt
+            }).ToList();
+
+            return (true, "Usuários cadastrados no sistema", usersDto);
         }
     }
 }

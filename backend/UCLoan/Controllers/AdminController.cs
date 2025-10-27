@@ -21,9 +21,9 @@ namespace UCLoan.Controllers
         [HttpGet("get-all-users")]
         public async Task<ActionResult<IList<User>>> GetUsersAsync()
         {
-            var users = await _adminService.GetUsersAsync();
+            var (success, message, users) = await _adminService.GetUsersAsync();
 
-            return Ok(users);
+            return Ok(new {success, message, users});
         }
     }
 }
