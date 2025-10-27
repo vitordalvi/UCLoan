@@ -8,34 +8,21 @@ namespace UCLoan.Services
     public class UserService : BaseService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public UserService(IUserRepository userRepository, LogService logService, IHttpContextAccessor httpContextorAcessor) : base(logService)
+
+        public UserService(IUserRepository userRepository, LogService logService) : base(logService)
         {
             _userRepository = userRepository;
-            _httpContextAccessor = httpContextorAcessor;
-        }
-
-        // Método para pegar o ID do usuário logado a partir do token JWT
-        private Guid? GetCurrentUserId()
-        {
-            var user = _httpContextAccessor.HttpContext?.User;
-            var idClaim = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (Guid.TryParse(idClaim, out var userId))
-                return userId;
-
-            return null;
         }
 
         // Mostrar as informações de perfil do usuário logado
         public async Task<(bool Success, string Message, GetMyProfileDTO? getProfileDto)> GetMyProfileAsync()
         {
-            var userId = GetCurrentUserId();
+            var userId = _userRepository.GetCurrentUserId();
 
             if (userId == null)
                 return (false, "O usuário não foi encontrado pelo ID.", null);
 
-            var user = await _userRepository.GetByIdAsync(userId.Value);
+            var user = await _userRepository.GetByIdAsync(userId.Result);
 
             if (user == null)
                 return (false, "O usuário não existe.", null);
@@ -47,6 +34,7 @@ namespace UCLoan.Services
                 Name = user.Name,
                 Email = user.Email,
                 CPF = user.CPF,
+                Role = user.Role.ToString(),
                 CreatedAt = user.CreatedAt,
             };
 
@@ -56,12 +44,12 @@ namespace UCLoan.Services
         public async Task<(bool Success, string Message)> UpdateMyData(UpdateMyDataDTO dto)
         {
             // Lógica para atualizar o usuário
-            var userId = GetCurrentUserId();
+            var userId = await _userRepository.GetCurrentUserId();
 
-            if (userId == null)
+            if (userId == Guid.Empty)
                 return (false, "O usuário não foi encontrado pelo ID.");
 
-            var user = await _userRepository.GetByIdAsync(userId.Value);
+            var user = await _userRepository.GetByIdAsync(userId);
 
             if (user == null)
                 return (false, "O usuário não existe");
