@@ -32,6 +32,17 @@ namespace UCLoan.Controllers
             return Ok(new { success, message, user });
         }
 
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDTO dto)
+        {
+            var (success, message) = await _userService.ChangePasswordAsync(
+                dto.OldPassword,
+                dto.NewPassword,
+                dto.ConfirmNewPassword);
+            
+            return Ok(new { success, message });
+        }
+
         [HttpPost("update-my-data")]
         public async Task<IActionResult> UpdateMyData(UpdateMyDataDTO dto)
         {
