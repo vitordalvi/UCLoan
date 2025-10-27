@@ -17,5 +17,10 @@ namespace UCLoan.Services
         // Obtem um usuário pelo seu email
         public Task<User?> GetByEmailAsync(string email) =>
             _userRepository.GetByEmailAsync(email);
+        // Obtém a lista de todos os usuários
+        public async Task<IList<User>> GetUsersAsync()
+        {
+            return await _userRepository.GetUsersAsync();
+        }
     }
 }
