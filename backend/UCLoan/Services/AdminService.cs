@@ -30,7 +30,7 @@ namespace UCLoan.Services
 
             var usersDto = users.Select(user => new GetUsersDTO
             {
-                Guid = user.Id.ToString(),
+                UserId = user.Id.ToString(),
                 Name = user.Name,
                 Email = user.Email,
                 Role = user.Role.ToString(),
