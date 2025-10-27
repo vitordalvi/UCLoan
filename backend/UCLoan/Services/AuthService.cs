@@ -58,16 +58,12 @@ namespace UCLoan.Services
             await _authRepository.AddUserAsync(user);
             var saved = await _authRepository.SaveChangesAsync();
 
-            if (saved)
-            {
-                // Log de registro de usuários
-                await _logService.LogAsync(
-                    user.Id,
-                    "Usuário registrado.",
-                    $"{user.Email}",
-                    user.Id,
-                    new { user.Email, user.Name, user.CPF });
-            }
+            await _logService.LogAsync(
+                user.Id,
+                "Usuário registrado.",
+                $"{user.Email}",
+                user.Id,
+                new { user.Email, user.Name, user.CPF });
 
             return saved ? (true, "Usuário registrado com sucesso.") : (false, "Erro ao registrar usuário.");
         }
