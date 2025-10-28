@@ -28,7 +28,6 @@ namespace UCLoan.Services
             if (user == null)
                 return (false, "O usuário não foi encontrado.", null);
 
-
             var profileDto = new GetMyProfileDTO
             {
                 Id = user.Id,
@@ -41,6 +40,7 @@ namespace UCLoan.Services
 
             return (true, "Perfil encontrado com sucesso",  profileDto);
         }
+
         // Alterar a senha do próprio usuário
         public async Task<(bool Success, string Message)> ChangePasswordAsync(
             string oldPassword,
@@ -68,10 +68,10 @@ namespace UCLoan.Services
             var verificationResult = hasher.VerifyHashedPassword(user, user.PasswordHash, oldPassword);
 
             if (oldPassword == newPassword)
-                return (false, "A nova senha não pode ser igual a antiga.");
+                return (false, "A nova senha não pode ser igual à antiga.");
 
             if (verificationResult != PasswordVerificationResult.Success)
-                return (false, "A senha antiga está incoreta.");
+                return (false, "A senha antiga está incorreta.");
 
             if (newPassword != confirmNewPassword)
             {
@@ -79,7 +79,7 @@ namespace UCLoan.Services
             }
 
             user.PasswordHash = hasher.HashPassword(user, newPassword);
-            await _userRepository.UpdateAsync(user);
+            await _userRepository.Update(user);
 
             var saved = await _userRepository.SaveChangesAsync();
 
@@ -92,53 +92,73 @@ namespace UCLoan.Services
 
             return saved ? (true, "Senha alterada com sucesso.") : (false, "Erro ao alterar a senha.");
         }
+
         // Alterar os próprios dados (nome, email) do usuário
         public async Task<(bool Success, string Message)> UpdateMyData(UpdateMyDataDTO dto)
         {
-            // Lógica para atualizar o usuário
             var userId = await _userRepository.GetCurrentUserId();
-
             if (userId == Guid.Empty)
                 return (false, "O usuário não foi encontrado pelo ID.");
 
             var user = await _userRepository.GetByIdAsync(userId);
-
             if (user == null)
                 return (false, "O usuário não existe");
 
-            if (string.IsNullOrEmpty(dto.Email) || string.IsNullOrEmpty(dto.Name))
+            if (string.IsNullOrEmpty(dto.Email) && string.IsNullOrEmpty(dto.Name))
                 return (false, "Email e nome são obrigatórios.");
 
-            bool dtoEmailExists = await _userRepository.IsEmailInUse(dto.Email);
-            bool changedEmail = dto.Email != user.Email;
-            bool changedName = dto.Name != user.Name;
+            bool changedEmail = !string.Equals(dto.Email, user.Email, StringComparison.OrdinalIgnoreCase);
+            bool changedName = !string.Equals(dto.Name, user.Name, StringComparison.Ordinal);
 
+            var errors = new List<string>();
+            var successes = new List<string>();
+
+            // Validação de email
+            if (changedEmail)
+            {
+                if (await _userRepository.IsEmailInUse(dto.Email))
+                    errors.Add("O email já está em uso por outro usuário.");
+                else
+                {
+                    user.Email = dto.Email;
+                    successes.Add("Email atualizado com sucesso.");
+                }
+            }
+
+            // Validação do nome
+            if (changedName)
+            {
+                user.Name = dto.Name;
+                successes.Add("Nome atualizado com sucesso.");
+            }
+
+            // Se não houve alterações
             if (!changedEmail && !changedName)
                 return (true, "Não houveram mudanças nos seus dados.");
 
-            if (changedEmail && dtoEmailExists)
-                return (false, "O email já está em uso por outro usuário.");
+            // Salvar alterações que passaram na validação
+            if (successes.Any())
+            {
+                await _userRepository.Update(user);
+                var saved = await _userRepository.SaveChangesAsync();
 
+                await _logService.LogAsync(
+                    user.Id,
+                    "O usuário atualizou os seus dados.",
+                    $"{user.Email}",
+                    user.Id,
+                    new { user.Email, user.Name });
 
-            user.Email = dto.Email;
-            user.Name = dto.Name;
+                if (!saved)
+                    errors.Add("Erro ao atualizar os dados.");
+            }
 
-            await _userRepository.UpdateAsync(user);
-            var saved = await _userRepository.SaveChangesAsync();
-
-            await _logService.LogAsync(
-                user.Id,
-                "O usuário atualizou os seus dados.",
-                $"{user.Email}",
-                user.Id,
-                new { user.Email, user.Name });
-
-            // Se email e nome foram alterados, ? "msg", se só email, : "msg", se só nome : "msg"
-            string message = changedEmail && changedName 
-                ? "Nome e email atualizados com sucesso." : changedEmail
-                ? "Email atualizado com sucesso." : "Nome atualizado com sucesso.";
-
-            return saved ? (true, message) : (false, "Erro ao atualizar os dados.");
+            // Mensagem final
+            if (errors.Any() && successes.Any())
+                return (false, string.Join(" ", errors) + " " + string.Join(" ", successes));
+            if (errors.Any())
+                return (false, string.Join(" ", errors));
+            return (true, string.Join(" ", successes));
         }
     }
 }
