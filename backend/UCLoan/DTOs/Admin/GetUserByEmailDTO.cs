@@ -3,7 +3,7 @@ using UCLoan.Attributes;
 
 namespace UCLoan.DTOs.Admin
 {
-    public class GetUsersDTO
+    public class GetUserByEmailDTO
     {
         public string UserId { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;

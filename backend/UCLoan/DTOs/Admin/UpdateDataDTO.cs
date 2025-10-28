@@ -1,23 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using UCLoan.Attributes;
 using UCLoan.Constants;
-using UCLoan.Constants.Utils;
 
-namespace UCLoan.DTOs.Authentication
+namespace UCLoan.DTOs.Admin
 {
-    public class UserRegisterDTO
+    public class UpdateDataDTO
     {
-        [Required]
-        [Email]
-        public string Email { get; set; } = string.Empty;
         [Required]
         [Name]
         public string Name { get; set; } = string.Empty;
         [Required]
+        [Email]
+        public string Email { get; set; } = string.Empty;
+        [Required]
         [Cpf]
         public string CPF { get; set; } = string.Empty;
         [Required]
-        [Password(PasswordPattern.DefaultPattern)]
-        public string Password { get; set; } = string.Empty;
+        [Role]
+        public Role Role { get; set; }
     }
 }
