@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UCLoan.Constants;
+using UCLoan.DTOs.Admin;
 using UCLoan.Entities;
 using UCLoan.Services;
 
@@ -24,6 +25,32 @@ namespace UCLoan.Controllers
             var (success, message, users) = await _adminService.GetUsersAsync();
 
             return Ok(new {success, message, users});
+        }
+
+        [HttpPost("get-user-by-id")]
+        public async Task<ActionResult<User?>> GetUserById([FromQuery] Guid userId)
+        {
+            var (success, message, user) = await _adminService.GetByIdAsync(userId);
+
+
+            return Ok(new {success, message, user});
+        }
+
+        [HttpPost("get-user-by-email")]
+        public async Task<ActionResult<User?>> GetByEmailAsync(string email)
+        {
+            var (success, message, user) = await _adminService.GetByEmailAsync(email);
+
+
+            return Ok(new {success, message, user});
+        }
+
+        [HttpPost("update-user-data")]
+        public async Task<ActionResult<User?>> UpdateUserData([FromQuery] Guid userId, [FromBody] UpdateDataDTO dto)
+        {
+            var (success, message, user) = await _adminService.UpdateUserData(userId, dto);
+
+            return Ok(new { success, message, user});
         }
     }
 }
