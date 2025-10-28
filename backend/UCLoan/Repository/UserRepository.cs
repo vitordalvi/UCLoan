@@ -39,6 +39,7 @@ namespace UCLoan.Repository
         public async Task<User?> GetByEmailAsync(string email)
         {
             return await _context.Users
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
 
@@ -46,31 +47,41 @@ namespace UCLoan.Repository
         public async Task<User?> GetByCpfAsync(string CPF)
         {
             return await _context.Users
+                .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.CPF == CPF);
         }
         
         // Verifica se o usuário existe pelo seu ID
         public async Task<bool> IsUserExists(Guid userId)
         {
-            return await _context.Users.AnyAsync(u => u.Id == userId);
+            return await _context.Users.AsNoTracking().AnyAsync(u => u.Id == userId);
         }
 
         // Verifica se o email já está em uso
         public async Task<bool> IsEmailInUse(string email)
         {
-            return await _context.Users.AnyAsync(u => u.Email == email);
+            return await _context.Users.AsNoTracking().AnyAsync(u => u.Email == email);
+        }
+
+        // Verifica se o CPF já está em uso
+        public async Task<bool> IsCpfInUse(string cpf)
+        {
+            return await _context.Users.AsNoTracking().AnyAsync(u => u.CPF == cpf);
         }
 
         // Lista todos os usuários
         public async Task<IList<User>> GetUsersAsync()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         // Atualiza os dados do usuário
-        public async Task UpdateAsync(User user)
+        public Task Update(User user)
         {
-            _context.Users.Update(user);
+            _context.Set<User>().Update(user);
+            return Task.CompletedTask;
         }
 
         // Salva os dados no banco
